@@ -4,7 +4,7 @@ import 'package:splashscreen/splashscreen.dart';
 
 import 'app_holder.dart';
 import 'page/login_page.dart';
-import './config/constant.dart' show AppColors;
+// import 'style/theme.dart' show AppColors;
 
 void main() {
   runApp(new MaterialApp(

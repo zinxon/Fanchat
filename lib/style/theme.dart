@@ -16,3 +16,7 @@ class Colors {
     end: Alignment.bottomCenter,
   );
 }
+
+class AppColors {
+  static const AppBarColor = 0xfffc852e;
+}
