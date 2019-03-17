@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1055193311408",
+    "firebase_url": "https://fanchat-7fe81.firebaseio.com",
+    "project_id": "fanchat",
+    "storage_bucket": "fanchat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055193311408:android:b3d628e302272669",
+        "android_client_info": {
+          "package_name": "com.flutter.shingson.fanchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055193311408-23ahh34n8jlup3k5tuempjepfqppjn3a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flutter.shingson.fanchat",
+            "certificate_hash": "0d7237be39713a047ca775fa00b2f1d8777685bd"
+          }
+        },
+        {
+          "client_id": "1055193311408-1ju5ko9f12untjp7ci00l30ugt188hvj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE3uNl8HPijX7lGNQ3ir7-VP6Kn-mlwxI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055193311408-1ju5ko9f12untjp7ci00l30ugt188hvj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
