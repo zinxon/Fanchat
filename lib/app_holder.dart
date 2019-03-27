@@ -1,30 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'page/chatbot_page.dart';
 import 'page/user_page.dart';
 import 'page/home_page.dart';
+// import 'package:flutter/services.dart';
 
 class AppHolder extends StatefulWidget {
-  AppHolder({Key key, this.title}) : super(key: key);
+  AppHolder({Key key, this.title, this.indexGlobal}) : super(key: key);
 
   final String title;
+  int indexGlobal = 0;
 
   @override
-  _AppHolderState createState() => new _AppHolderState();
+  _AppHolderState createState() => _AppHolderState();
 }
 
 class _AppHolderState extends State<AppHolder> {
-  List<Widget> _eachView;
   List<Widget> pageList = List();
   int _index = 0;
 
   @override
   void initState() {
-    // TODO: implement initState
-    pageList..add(HomePage())..add(UserPage("User"));
-    // _eachView = List();
-    // _eachView..add(EachView('Home'))..add(EachView('User'));
     super.initState();
+    pageList..add(HomePage())..add(UserPage());
   }
 
   @override
@@ -33,7 +30,6 @@ class _AppHolderState extends State<AppHolder> {
       body: SafeArea(
         child: Container(
           child: pageList[_index],
-          // height: _index == 0 ? 720 : MediaQuery.of(context).size.height,
           height: _index == 0
               ? MediaQuery.of(context).size.height * 0.85
               : MediaQuery.of(context).size.height,
@@ -48,7 +44,7 @@ class _AppHolderState extends State<AppHolder> {
           );
         },
         tooltip: 'Chatbot',
-        child: Tab(icon: new Image.asset("assets/img/fanchat.png")),
+        child: Tab(icon: Image.asset("assets/img/fanchat.png")),
         isExtended: true,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

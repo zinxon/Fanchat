@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:splashscreen/splashscreen.dart';
 
-import 'app_holder.dart';
 import 'page/login_page.dart';
+// import 'app_holder.dart';
 // import 'style/theme.dart' show AppColors;
 
 void main() {
-  runApp(new MaterialApp(
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     title: 'FanChat',
     theme: ThemeData(
       primarySwatch: Colors.orange,
       // platform: TargetPlatform.iOS,
     ),
-    home: new MyApp(),
+    home: MyApp(),
   ));
 }
 
 class MyApp extends StatefulWidget {
   @override
-  _MyAppState createState() => new _MyAppState();
+  _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -28,20 +29,20 @@ class _MyAppState extends State<MyApp> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: Colors.orange, //or set color with: Color(0xFF0000FF)
     ));
-    return new SplashScreen(
+    return SplashScreen(
         seconds: 1,
         navigateAfterSeconds: LoginPage(),
         // title: Text(
         //   'FanChat',
-        //   style: new TextStyle(
+        //   style:   TextStyle(
         //       fontWeight: FontWeight.bold,
         //       fontSize: 20.0,
         //       // color: Color(AppColors.AppBarColor)),
         //       color: Colors.white),
         // ),
-        image: new Image.asset('assets/img/fanchat.png'),
+        image: Image.asset('assets/img/fanchat.png'),
         backgroundColor: Colors.orange,
-        styleTextUnderTheLoader: new TextStyle(),
+        styleTextUnderTheLoader: TextStyle(),
         photoSize: 35.0,
         // onClick: () => print("Flutter Egypt"),
         loaderColor: Colors.white);

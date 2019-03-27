@@ -12,7 +12,7 @@ import '../style/theme.dart' as Theme;
 import '../utils/bubble_indication_painter.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
-final GoogleSignIn _googleSignIn = new GoogleSignIn();
+final GoogleSignIn googleSignIn = GoogleSignIn();
 
 SharedPreferences preferences;
 
@@ -20,12 +20,12 @@ class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => new _LoginPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
   final FocusNode myFocusNodePasswordLogin = FocusNode();
@@ -33,32 +33,28 @@ class _LoginPageState extends State<LoginPage>
   final FocusNode myFocusNodePassword = FocusNode();
   final FocusNode myFocusNodeEmail = FocusNode();
 
-  TextEditingController loginEmailController = new TextEditingController();
-  TextEditingController loginPasswordController = new TextEditingController();
+  TextEditingController loginEmailController = TextEditingController();
+  TextEditingController loginPasswordController = TextEditingController();
 
   bool _obscureTextLogin = true;
   bool _obscureTextSignup = true;
-  bool _obscureTextSignupConfirm = true;
 
-  TextEditingController signupEmailController = new TextEditingController();
-  TextEditingController signupPasswordController = new TextEditingController();
+  TextEditingController signupEmailController = TextEditingController();
+  TextEditingController signupPasswordController = TextEditingController();
 
   PageController _pageController;
 
   Color left = Colors.black;
   Color right = Colors.white;
 
-  String _email, _password;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
         key: _scaffoldKey,
         body: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
+            FocusScope.of(context).requestFocus(FocusNode());
           },
           child: NotificationListener<OverscrollIndicatorNotification>(
             onNotification: (overscroll) {
@@ -70,8 +66,8 @@ class _LoginPageState extends State<LoginPage>
                 height: MediaQuery.of(context).size.height >= 775.0
                     ? MediaQuery.of(context).size.height
                     : 775.0,
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
                       colors: [
                         Theme.Colors.loginGradientStart,
                         Theme.Colors.loginGradientEnd
@@ -86,11 +82,11 @@ class _LoginPageState extends State<LoginPage>
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(top: 40.0),
-                      child: new Image(
+                      child: Image(
                           width: 150.0,
                           height: 150.0,
                           fit: BoxFit.fill,
-                          image: new AssetImage('assets/img/fanchat.png')),
+                          image: AssetImage('assets/img/fanchat.png')),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 40.0),
@@ -114,11 +110,11 @@ class _LoginPageState extends State<LoginPage>
                           }
                         },
                         children: <Widget>[
-                          new ConstrainedBox(
+                          ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
                             child: _buildSignIn(context),
                           ),
-                          new ConstrainedBox(
+                          ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
                             child: _buildSignUp(context),
                           ),
@@ -138,6 +134,10 @@ class _LoginPageState extends State<LoginPage>
     myFocusNodePassword.dispose();
     myFocusNodeEmail.dispose();
     _pageController?.dispose();
+    signupEmailController.dispose();
+    signupPasswordController.dispose();
+    loginEmailController.dispose();
+    loginPasswordController.dispose();
     super.dispose();
   }
 
@@ -154,10 +154,10 @@ class _LoginPageState extends State<LoginPage>
   }
 
   void showInSnackBar(String value) {
-    FocusScope.of(context).requestFocus(new FocusNode());
+    FocusScope.of(context).requestFocus(FocusNode());
     _scaffoldKey.currentState?.removeCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text(
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(
         value,
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -221,7 +221,6 @@ class _LoginPageState extends State<LoginPage>
     return Container(
         padding: EdgeInsets.only(top: 23.0),
         child: Form(
-          key: _formKey,
           child: Column(
             children: <Widget>[
               Stack(
@@ -246,7 +245,6 @@ class _LoginPageState extends State<LoginPage>
                                 left: 25.0,
                                 right: 25.0),
                             child: TextFormField(
-                              onSaved: (input) => _email = input,
                               focusNode: myFocusNodeEmailLogin,
                               textInputAction: TextInputAction.next,
                               onFieldSubmitted: (term) {
@@ -286,7 +284,6 @@ class _LoginPageState extends State<LoginPage>
                                 left: 25.0,
                                 right: 25.0),
                             child: TextFormField(
-                                onSaved: (input) => _password = input,
                                 focusNode: myFocusNodePasswordLogin,
                                 textInputAction: TextInputAction.done,
                                 onFieldSubmitted: (term) {
@@ -325,7 +322,7 @@ class _LoginPageState extends State<LoginPage>
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 180.0),
-                    decoration: new BoxDecoration(
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                       boxShadow: <BoxShadow>[
                         BoxShadow(
@@ -339,7 +336,7 @@ class _LoginPageState extends State<LoginPage>
                           blurRadius: 20.0,
                         ),
                       ],
-                      gradient: new LinearGradient(
+                      gradient: LinearGradient(
                           colors: [
                             Theme.Colors.loginGradientEnd,
                             Theme.Colors.loginGradientStart
@@ -387,7 +384,7 @@ class _LoginPageState extends State<LoginPage>
                   children: <Widget>[
                     Container(
                       decoration: BoxDecoration(
-                        gradient: new LinearGradient(
+                        gradient: LinearGradient(
                             colors: [
                               Colors.white10,
                               Colors.white,
@@ -412,7 +409,7 @@ class _LoginPageState extends State<LoginPage>
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        gradient: new LinearGradient(
+                        gradient: LinearGradient(
                             colors: [
                               Colors.white,
                               Colors.white10,
@@ -438,11 +435,11 @@ class _LoginPageState extends State<LoginPage>
                       onTap: _signInWithGoogle,
                       child: Container(
                         padding: const EdgeInsets.all(15.0),
-                        decoration: new BoxDecoration(
+                        decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
                         ),
-                        child: new Icon(
+                        child: Icon(
                           FontAwesomeIcons.google,
                           color: Color(0xFF0084ff),
                         ),
@@ -551,7 +548,7 @@ class _LoginPageState extends State<LoginPage>
               ),
               Container(
                 margin: EdgeInsets.only(top: 180.0),
-                decoration: new BoxDecoration(
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
@@ -565,7 +562,7 @@ class _LoginPageState extends State<LoginPage>
                       blurRadius: 20.0,
                     ),
                   ],
-                  gradient: new LinearGradient(
+                  gradient: LinearGradient(
                       colors: [
                         Theme.Colors.loginGradientEnd,
                         Theme.Colors.loginGradientStart
@@ -621,43 +618,63 @@ class _LoginPageState extends State<LoginPage>
     });
   }
 
-  void _toggleSignupConfirm() {
-    setState(() {
-      _obscureTextSignupConfirm = !_obscureTextSignupConfirm;
-    });
-  }
-
   Future<void> _signInWithEmailAndPassword() async {
-    final formState = _formKey.currentState;
-    if (formState.validate()) {
-      formState.save();
-      try {
-        FirebaseUser user = await _auth.signInWithEmailAndPassword(
-            email: loginEmailController.text,
-            password: loginPasswordController.text);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => AppHolder(
-                      title: 'FacChat',
-                    )));
-      } catch (e) {
+    try {
+      FirebaseUser user = await _auth.signInWithEmailAndPassword(
+          email: loginEmailController.text,
+          password: loginPasswordController.text);
+      assert(user.email != null);
+      assert(user.displayName != null);
+      // print("hihi");
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
+      final FirebaseUser currentUser = await _auth.currentUser();
+      assert(user.uid == currentUser.uid);
+      if (user != null) {
+        final QuerySnapshot result = await Firestore.instance
+            .collection("users")
+            .where("id", isEqualTo: user.uid)
+            .getDocuments();
+        final List<DocumentSnapshot> documents = result.documents;
+
         Fluttertoast.showToast(
-            msg: e.message,
+            msg: "Welcome, ${documents[0]['username']}!",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIos: 1,
             backgroundColor: Colors.blueGrey,
             textColor: Colors.white,
             fontSize: 14.0);
-        print(e.message + ' e-message');
+        preferences = await SharedPreferences.getInstance();
+        await preferences.setString("photoUrl", documents[0]['profilePicture']);
+        await preferences.setString("id", documents[0]['id']);
+        await preferences.setString("username", documents[0]['username']);
+        await preferences.setBool("isLogged", true);
+        print("In login photoUrl: " + user.photoUrl);
+        print("In login username: " + user.displayName);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AppHolder(
+                      title: 'FacChat',
+                    )));
+        Fluttertoast.showToast(msg: "Login successful");
       }
+    } catch (e) {
+      // Fluttertoast.showToast(
+      //     msg: e.message,
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     gravity: ToastGravity.BOTTOM,
+      //     timeInSecForIos: 1,
+      //     backgroundColor: Colors.blueGrey,
+      //     textColor: Colors.white,
+      //     fontSize: 14.0);
+      // print("e-message: " + e.message);
     }
-    // print(_email + _password);
   }
 
   Future<FirebaseUser> _signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAccount googleUser = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.getCredential(
@@ -687,6 +704,7 @@ class _LoginPageState extends State<LoginPage>
                     title: 'FacChat',
                   )));
     } catch (e) {
+      print("e-message: " + e.message);
       Fluttertoast.showToast(
           msg: e.message,
           toastLength: Toast.LENGTH_SHORT,
@@ -709,19 +727,20 @@ class _LoginPageState extends State<LoginPage>
           "id": user.uid,
           "username": user.displayName,
           "email": user.email,
-          "profilePicture": user.photoUrl
+          "profilePicture": user.photoUrl,
+          "stockList": [],
+          "investorType": "點擊下方Quiz按鈕進行測驗",
+          'resultUrl': ""
         });
         await preferences.setString("id", user.uid);
         await preferences.setString("username", user.displayName);
         await preferences.setString("photoUrl", user.photoUrl);
+        await preferences.setBool("isLogged", true);
       } else {
         await preferences.setString("photoUrl", documents[0]['profilePicture']);
         await preferences.setString("id", documents[0]['id']);
         await preferences.setString("username", documents[0]['username']);
-        // print(documents[0]['id']);
-        // print(documents[0]['profilePicture']);
-        // print(documents[0]['username']);
-        // print(preferences.getString("id"));
+        await preferences.setBool("isLogged", true);
       }
       Fluttertoast.showToast(msg: "Login successful");
     }
@@ -734,20 +753,30 @@ class _LoginPageState extends State<LoginPage>
               email: signupEmailController.text,
               password: signupPasswordController.text);
 
-      final QuerySnapshot result = await Firestore.instance
-          .collection("users")
-          .where("id", isEqualTo: user.uid)
-          .getDocuments();
-      final List<DocumentSnapshot> documents = result.documents;
-      if (documents.length == 0) {
-        Firestore.instance.collection("users").document(user.uid).setData({
-          "id": user.uid,
-          "username": user.email.split('@')[0],
-          "email": user.email,
-          "profilePicture":
-              "https://firebasestorage.googleapis.com/v0/b/fanchat.appspot.com/o/business_avatar_man_businessman_profile_account_contact_person-512.png?alt=media&token=b9ed1227-9993-4be2-a1ae-2c4f3846e489"
+      // var userUpdateInfo =   UserUpdateInfo();
+      var userUpdateInfo = UserUpdateInfo();
+      userUpdateInfo.displayName = user.email.split('@')[0];
+      userUpdateInfo.photoUrl =
+          "https://firebasestorage.googleapis.com/v0/b/fanchat.appspot.com/o/business_avatar_man_businessman_profile_account_contact_person-512.png?alt=media&token=b9ed1227-9993-4be2-a1ae-2c4f3846e489";
+      user.updateProfile(userUpdateInfo).then((user) {
+        FirebaseAuth.instance.currentUser().then((user) {
+          Firestore.instance.collection("users").document(user.uid).setData({
+            "id": user.uid,
+            "username": user.displayName,
+            "email": user.email,
+            "profilePicture": user.photoUrl,
+            "stockList": [],
+            "investorType": "點擊下方Quiz按鈕進行測驗",
+            'resultUrl': ""
+          });
+        }).catchError((e) {
+          print(e);
         });
-      }
+      }).catchError((e) {
+        print(e);
+      });
+
+      // }
       Fluttertoast.showToast(
           msg: "Sign Up success",
           toastLength: Toast.LENGTH_SHORT,

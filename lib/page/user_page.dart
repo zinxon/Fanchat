@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../app_holder.dart';
+import 'login_page.dart';
+import 'quiz_page.dart';
+
+Future<FirebaseUser> _firebaseUser = FirebaseAuth.instance.currentUser();
 
 SharedPreferences preferences;
-String _username;
-String _photoUrl;
+String _username = "User";
+String _photoUrl =
+    'https://firebasestorage.googleapis.com/v0/b/fanchat.appspot.com/o/business_avatar_man_businessman_profile_account_contact_person-512.png?alt=media&token=b9ed1227-9993-4be2-a1ae-2c4f3846e489';
 
 class UserPage extends StatefulWidget {
-  String _title;
-
-  UserPage(this._title);
+  UserPage();
 
   _UserPageState createState() => _UserPageState();
 }
@@ -27,38 +31,62 @@ class _UserPageState extends State<UserPage> {
     return Future.value(false);
   }
 
-  // @override
-//   Widget build(BuildContext context) {
-//     return WillPopScope(
-//       onWillPop: _requestPop,
-//       child: Scaffold(
-//         appBar: AppBar(
-//           automaticallyImplyLeading: false,
-//           title: Text(widget._title),
-//           centerTitle: true,
-//         ),
-//         body: Center(child: Text(widget._title)),
-//       ),
-//     );
-//   }
-// }
-  void _getUserInfo() async {
-    preferences = await SharedPreferences.getInstance();
-    String uid = preferences.getString("id");
-    final QuerySnapshot result = await Firestore.instance
-        .collection("users")
-        .where("id", isEqualTo: uid)
-        .getDocuments();
-    final List<DocumentSnapshot> documents = result.documents;
-    _username = documents[0]['username'];
-    _photoUrl = documents[0]['profilePicture'];
-    print("photoUrl:" + _photoUrl);
-    print(documents[0]['username']);
-  }
+  // Future<Null> _function() async {
+  //   // /**
+  //   // This Function will be called every single time
+  //   // when application is opened and it will check
+  //   // if the value inside Shared Preference exist or not
+  //   // **/
+  //   SharedPreferences prefs;
+  //   prefs = await SharedPreferences.getInstance();
+  //   this.setState(() {
+  //     if (prefs.getString("username") != null) {
+  //       loggedIn = true;
+  //     } else {
+  //       loggedIn = false;
+  //     }
+  //   });
+  // }
+
+  // Future<Null> _getUserInfo() async {
+
+  //   final FirebaseUser user = await _auth.currentUser();
+  //   final userid = user.uid;
+  //   // preferences = await SharedPreferences.getInstance();
+  //   // String uid = preferences.getString("id");
+  //   final QuerySnapshot result = await Firestore.instance
+  //       .collection("users")
+  //       .where("id", isEqualTo: userid)
+  //       .getDocuments();
+  //   final List<DocumentSnapshot> documents = result.documents;
+  //   _username = documents[0]['username'];
+  //   _photoUrl = documents[0]['photoUrl'];
+  //   print("uid:" + userid);
+  //   print("username:" + _username);
+  //   // _username = preferences.getString("username");
+  //   // _photoUrl = preferences.getString("photoUrl");
+  // }
 
   void initState() {
     super.initState();
-    _getUserInfo();
+    _firebaseUser.then((user) {
+      setState(() {
+        _photoUrl = user.photoUrl;
+        _username = user.displayName;
+      });
+    }).catchError((e) {
+      print(e);
+    });
+    // _getUserInfo();
+    // _firebaseUser = FirebaseAuth.instance.currentUser();
+    // FirebaseAuth.instance.currentUser().then((user) {
+    //   setState(() {
+    //     _photoUrl = user.photoUrl;
+    //     _username = user.displayName;
+    //   });
+    // }).catchError((e) {
+    //   print(e);
+    // });
   }
 
   @override
@@ -66,7 +94,7 @@ class _UserPageState extends State<UserPage> {
     return WillPopScope(
       onWillPop: _requestPop,
       child: Scaffold(
-          body: new Stack(
+          body: Stack(
         children: <Widget>[
           ClipPath(
             child: Container(color: Colors.orange),
@@ -84,16 +112,14 @@ class _UserPageState extends State<UserPage> {
                       decoration: BoxDecoration(
                           color: Colors.red,
                           image: DecorationImage(
-                              // 'https://pixel.nymag.com/imgs/daily/vulture/2017/06/14/14-tom-cruise.w700.h700.jpg'
                               image: NetworkImage(_photoUrl),
                               fit: BoxFit.cover),
                           borderRadius: BorderRadius.all(Radius.circular(75.0)),
                           boxShadow: [
-                            BoxShadow(blurRadius: 7.0, color: Colors.orange)
+                            BoxShadow(blurRadius: 7.0, color: Colors.black)
                           ])),
-                  SizedBox(height: 90.0),
+                  SizedBox(height: 25.0),
                   Text(
-                    // 'Tom Cruise',
                     _username,
                     style: TextStyle(
                         fontSize: 30.0,
@@ -102,66 +128,130 @@ class _UserPageState extends State<UserPage> {
                   ),
                   SizedBox(height: 15.0),
                   Text(
-                    'Subscribe guys',
+                    '直覺 情感 積累型投資者',
                     style: TextStyle(
                         fontSize: 17.0,
                         fontStyle: FontStyle.italic,
                         fontFamily: 'Montserrat'),
                   ),
-                  SizedBox(height: 25.0),
-                  Container(
-                      height: 30.0,
-                      width: 95.0,
-                      child: Material(
-                        borderRadius: BorderRadius.circular(20.0),
-                        shadowColor: Colors.greenAccent,
-                        color: Colors.green,
-                        elevation: 7.0,
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Center(
-                            child: Text(
-                              'Edit Name',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Montserrat'),
-                            ),
-                          ),
-                        ),
+                  Stack(
+                    children: <Widget>[
+                      Scrollbar(
+                          child: Container(
+                        height: 100,
+                        width: MediaQuery.of(context).size.height * 0.85,
+                        child: Column(children: <Widget>[
+                          Flexible(
+                              child: ListView.builder(
+                            padding: EdgeInsets.all(8.0),
+                            reverse: true,
+                            itemBuilder: (_, int index) => Text("hihi"),
+                            itemCount: 1,
+                          )),
+                          Divider(height: 1.0),
+                        ]),
                       )),
-                  SizedBox(height: 25.0),
-                  Container(
-                      height: 30.0,
-                      width: 95.0,
-                      child: Material(
-                        borderRadius: BorderRadius.circular(20.0),
-                        shadowColor: Colors.redAccent,
-                        color: Colors.red,
-                        elevation: 7.0,
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Center(
-                            child: Text(
-                              'Log out',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Montserrat'),
+                      // SizedBox(height: 25.0),
+                      Container(
+                          margin: const EdgeInsets.only(top: 300, left: 20.0),
+                          height: 30.0,
+                          width: 95.0,
+                          child: Material(
+                            borderRadius: BorderRadius.circular(20.0),
+                            shadowColor: Colors.greenAccent,
+                            color: Colors.green,
+                            elevation: 7.0,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => QuizPage()),
+                                );
+                              },
+                              child: Center(
+                                child: Text(
+                                  'Quiz',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'Montserrat'),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ))
+                          )),
+                      // SizedBox(
+                      //   height: 300,
+                      // ),
+                      Container(
+                          margin: const EdgeInsets.only(top: 300, left: 230.0),
+                          height: 30.0,
+                          width: 95.0,
+                          child: Material(
+                            borderRadius: BorderRadius.circular(20.0),
+                            shadowColor: Colors.redAccent,
+                            color: Colors.red,
+                            elevation: 7.0,
+                            child: GestureDetector(
+                              onTap: _logout,
+                              child: Center(
+                                child: Text(
+                                  'Logout',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'Montserrat'),
+                                ),
+                              ),
+                            ),
+                          ))
+                    ],
+                  )
                 ],
               ))
         ],
       )),
     );
   }
+
+  Future<void> _handleSignOut() async {
+    googleSignIn.disconnect();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => LoginPage()));
+  }
+
+  Future<Null> logoutUser() async {
+    //logout user
+    SharedPreferences prefs;
+    prefs = await SharedPreferences.getInstance();
+    await googleSignIn.signOut();
+    prefs.clear();
+    prefs.commit();
+    //   this.setState(() {
+    //     /*
+    //    updating the value of loggedIn to false so it will
+    //    automatically trigger the screen to display loginScaffold.
+    // */
+    //     loggedIn = false;
+    //   });
+    prefs.setBool("isLogged", false);
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => LoginPage()));
+  }
+
+  Future<Null> _logout() async {
+    FirebaseAuth.instance.signOut().then((val) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
+      Fluttertoast.showToast(msg: "Logout successful");
+    }).catchError((e) {
+      print(e);
+    });
+  }
 }
 
 class getClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    var path = new Path();
+    var path = Path();
 
     path.lineTo(0.0, size.height / 1.9);
     path.lineTo(size.width + 125, 0.0);
