@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -137,26 +138,61 @@ class _UserPageState extends State<UserPage> {
                         fontStyle: FontStyle.italic,
                         fontFamily: 'Montserrat'),
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Stack(
                     children: <Widget>[
                       Scrollbar(
                           child: Container(
-                        height: 100,
+                        height: 280,
                         width: MediaQuery.of(context).size.height * 0.85,
                         child: Column(children: <Widget>[
                           Flexible(
                               child: ListView.builder(
                             padding: EdgeInsets.all(8.0),
-                            reverse: true,
-                            itemCount: 1,
-                            itemBuilder: (_, int index) => Text("hihi"),
+                            // reverse: true,
+                            itemCount: _userModel.stockCodeList.length,
+                            // itemBuilder: (_, int index) =>
+                            //     Text(_userModel.stockCodeList[index]),
+                            itemBuilder: (_, int index) {
+                              return Dismissible(
+                                key: Key(_userModel.stockCodeList[index]),
+                                background: _myHiddenContainer() ?? Container(),
+                                child: _myListContainer(
+                                        _userModel.stockList[index].stockName,
+                                        _userModel
+                                            .stockList[index].stockCode) ??
+                                    Container(),
+                                onDismissed: (direction) {
+                                  if (direction ==
+                                      DismissDirection.startToEnd) {
+                                    Fluttertoast.showToast(msg: "Delete");
+                                    if (_userModel.stockList.contains(
+                                        _userModel.stockList.removeAt(index))) {
+                                      setState(() {
+                                        _userModel.stockList.remove(_userModel
+                                            .stockList
+                                            .removeAt(index));
+                                      });
+                                    }
+                                  } else {
+                                    if (direction ==
+                                        DismissDirection.endToStart) {
+                                      Fluttertoast.showToast(msg: "Archive");
+                                      // Archive functionality
+                                    }
+                                  }
+                                },
+                              );
+                            },
                           )),
                           Divider(height: 1.0),
                         ]),
                       )),
                       // SizedBox(height: 25.0),
                       Container(
-                          margin: const EdgeInsets.only(top: 300, left: 20.0),
+                          margin: const EdgeInsets.only(top: 290, left: 20.0),
                           height: 30.0,
                           width: 95.0,
                           child: Material(
@@ -186,7 +222,7 @@ class _UserPageState extends State<UserPage> {
                       //   height: 300,
                       // ),
                       Container(
-                          margin: const EdgeInsets.only(top: 300, left: 230.0),
+                          margin: const EdgeInsets.only(top: 290, left: 230.0),
                           height: 30.0,
                           width: 95.0,
                           child: Material(
@@ -212,6 +248,100 @@ class _UserPageState extends State<UserPage> {
               ))
         ],
       )),
+    );
+  }
+
+  Widget _myListContainer(String taskname, String subtask) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        height: 120.0,
+        child: Material(
+          color: Colors.white,
+          elevation: 14.0,
+          shadowColor: Color(0x802196F3),
+          child: Container(
+            child: Row(
+              children: <Widget>[
+                Container(
+                  height: 80.0,
+                  width: 10.0,
+                  color: Colors.orange,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            child: Text(taskname,
+                                style: TextStyle(
+                                    fontSize: 24.0,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            child: Text(subtask,
+                                style: TextStyle(
+                                    fontSize: 18.0, color: Colors.blueAccent)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Align(
+                //   alignment: Alignment.centerRight,
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(8.0),
+                // child: Container(
+                //   child: Text(taskTime,
+                //       style:
+                //           TextStyle(fontSize: 18.0, color: Colors.black45)),
+                // ),
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _myHiddenContainer() {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      color: Colors.orange,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+                icon: Icon(FontAwesomeIcons.solidTrashAlt),
+                color: Colors.white,
+                onPressed: () {
+                  setState(() {});
+                }),
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+                icon: Icon(FontAwesomeIcons.archive),
+                color: Colors.white,
+                onPressed: () {
+                  setState(() {});
+                }),
+          ),
+        ],
+      ),
     );
   }
 

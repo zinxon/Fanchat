@@ -1,4 +1,4 @@
-class _Stock {
+class Stock {
   String _stockCode;
   String _stockName;
   String _discribe;
@@ -7,14 +7,14 @@ class _Stock {
   String _sector;
   String _website;
 
-  _Stock(stock) {
-    _stockCode = stock['stockCode'];
-    _stockName = stock['name'];
-    _discribe = stock['discribe'];
-    _employees = stock['employeese'];
-    _industry = stock['industry'];
-    _sector = stock['sector'];
-    _website = stock['website'];
+  Stock.fromFirebase(Map<dynamic, dynamic> parsedJson) {
+    _stockCode = parsedJson['stockCode'];
+    _stockName = parsedJson['name'];
+    _discribe = parsedJson['discribe'];
+    _employees = parsedJson['employeese'];
+    _industry = parsedJson['industry'];
+    _sector = parsedJson['sector'];
+    _website = parsedJson['website'];
   }
 
   String get stockCode => _stockCode;

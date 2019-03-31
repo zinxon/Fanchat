@@ -11,6 +11,7 @@ import '../app_holder.dart';
 import '../style/theme.dart' as Theme;
 import '../utils/bubble_indication_painter.dart';
 import '../models/user_model.dart';
+import '../models/stock_model.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -638,7 +639,9 @@ class _LoginPageState extends State<LoginPage>
             .getDocuments();
         final List<DocumentSnapshot> documents = result.documents;
         print(documents);
-
+        var userDoc = documents[0].data;
+        print("Here is user json: $userDoc");
+        UserModel userModel = UserModel.fromFirebase(userDoc);
         Fluttertoast.showToast(
             msg: "Welcome, ${documents[0]['username']}!",
             toastLength: Toast.LENGTH_SHORT,
@@ -724,10 +727,21 @@ class _LoginPageState extends State<LoginPage>
           .getDocuments();
       final List<DocumentSnapshot> documents = result.documents;
       var userDoc = documents[0].data;
-      print("Here is user json: $userDoc");
+      // print("Here is user json: $userDoc");
       UserModel userModel = UserModel.fromFirebase(userDoc);
-      UserModel userModel2 = UserModel.instance;
-      print(identical(userModel, userModel2));
+      // UserModel userModel2 = UserModel.instance;
+      for (int i = 0; i < userModel.stockCodeList.length; i++) {
+        var temp = await Firestore.instance
+            .collection("stockCode")
+            .where("stockCode", isEqualTo: userModel.stockCodeList[i])
+            .getDocuments();
+        var tempData = temp.documents[0].data;
+        print(tempData);
+        userModel.setStockList = tempData;
+        // Stock(temp.documents[0].data);
+      }
+
+      // print(identical(userModel, userModel2));
       // print(userModel.username);
 
       preferences = await SharedPreferences.getInstance();
