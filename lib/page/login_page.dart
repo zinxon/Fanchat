@@ -10,6 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../app_holder.dart';
 import '../style/theme.dart' as Theme;
 import '../utils/bubble_indication_painter.dart';
+import '../models/user_model.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -636,6 +637,7 @@ class _LoginPageState extends State<LoginPage>
             .where("id", isEqualTo: user.uid)
             .getDocuments();
         final List<DocumentSnapshot> documents = result.documents;
+        print(documents);
 
         Fluttertoast.showToast(
             msg: "Welcome, ${documents[0]['username']}!",
@@ -721,6 +723,13 @@ class _LoginPageState extends State<LoginPage>
           .where("id", isEqualTo: user.uid)
           .getDocuments();
       final List<DocumentSnapshot> documents = result.documents;
+      var userDoc = documents[0].data;
+      print("Here is user json: $userDoc");
+      UserModel userModel = UserModel.fromFirebase(userDoc);
+      UserModel userModel2 = UserModel.instance;
+      print(identical(userModel, userModel2));
+      // print(userModel.username);
+
       preferences = await SharedPreferences.getInstance();
       if (documents.length == 0) {
         Firestore.instance.collection("users").document(user.uid).setData({
@@ -729,8 +738,9 @@ class _LoginPageState extends State<LoginPage>
           "email": user.email,
           "profilePicture": user.photoUrl,
           "stockList": [],
-          "investorType": "點擊下方Quiz按鈕進行測驗",
-          'resultUrl': ""
+          "investorType": "",
+          'resultUrl': "",
+          "didQuiz": false
         });
         await preferences.setString("id", user.uid);
         await preferences.setString("username", user.displayName);
@@ -746,7 +756,7 @@ class _LoginPageState extends State<LoginPage>
     }
   }
 
-  void signUp() async {
+  Future<void> signUp() async {
     try {
       FirebaseUser user = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
@@ -766,8 +776,9 @@ class _LoginPageState extends State<LoginPage>
             "email": user.email,
             "profilePicture": user.photoUrl,
             "stockList": [],
-            "investorType": "點擊下方Quiz按鈕進行測驗",
-            'resultUrl': ""
+            "investorType": "",
+            'resultUrl': "",
+            "didQuiz": false
           });
         }).catchError((e) {
           print(e);

@@ -8,7 +8,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../app_holder.dart';
 import '../api/yahoo_finance.dart';
+import '../style/theme.dart' show AppColors;
+import '../models/user_model.dart';
+import 'stock_chart_page.dart';
 
+UserModel _userModel = UserModel.instance;
 FirebaseUser _firebaseUser;
 String _username = "User";
 String _photoUrl =
@@ -100,8 +104,9 @@ class _ChatbotPageState extends State<ChatbotPage>
         authGoogle: authGoogle, language: Language.CHINESE_CANTONESE);
     AIResponse response = await dialogflow.detectIntent(query);
     ChatMessage message = ChatMessage(
-      text: response.getMessage() ??
-          CardDialogflow(response.getListMessage()[0]).title,
+      // text: response.getMessage() ??
+      //     CardDialogflow(response.getListMessage()[0]).title,
+      text: response.getMessage(),
       name: "FanChat",
       type: false,
     );
@@ -109,7 +114,7 @@ class _ChatbotPageState extends State<ChatbotPage>
     if (response.queryResult.action == "add_stock") {
       print("action: " + response.queryResult.action);
       addStock(response);
-    } else if (response.queryResult.action == "get_stock_ ") {
+    } else if (response.queryResult.action == "get_stock_new") {
       List msg = response.getListMessage();
       String msgS = (msg[0]['text']['text'][0]).toString();
       if (msgS.contains("-")) {
@@ -126,7 +131,7 @@ class _ChatbotPageState extends State<ChatbotPage>
     _textController.clear();
     ChatMessage message = ChatMessage(
       text: text,
-      name: _username,
+      name: _userModel.username,
       type: true,
     );
     setState(() {
@@ -158,7 +163,7 @@ class _ChatbotPageState extends State<ChatbotPage>
               icon: Icon(Icons.home),
               color: Colors.black,
               onPressed: () {
-                Navigator.pushReplacement(
+                Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => AppHolder(
@@ -274,10 +279,20 @@ class ChatMessage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            Text(this.name, style: Theme.of(context).textTheme.subhead),
+            Text(this.name, style: TextStyle(fontWeight: FontWeight.bold)),
+            // style: Theme.of(context).textTheme.subhead),
             Container(
-              margin: const EdgeInsets.only(top: 10.0),
-              child: Text(text),
+              margin: const EdgeInsets.only(top: 15.0),
+              // child: Text(text),
+              child: Container(
+                child: Text(
+                  text,
+                ),
+                padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                decoration: BoxDecoration(
+                    color: AppColors.greyColor2,
+                    borderRadius: BorderRadius.circular(8.0)),
+              ),
             ),
           ],
         ),
@@ -292,7 +307,8 @@ class ChatMessage extends StatelessWidget {
             decoration: BoxDecoration(
                 color: Colors.red,
                 image: DecorationImage(
-                    image: NetworkImage(_photoUrl), fit: BoxFit.cover),
+                    image: NetworkImage(_userModel.profilePicture),
+                    fit: BoxFit.cover),
                 borderRadius: BorderRadius.all(Radius.circular(75.0)),
                 boxShadow: [BoxShadow(blurRadius: 7.0, color: Colors.black)])),
       ),
@@ -313,17 +329,69 @@ class ChatMessage extends StatelessWidget {
 
 class CustomToolTip extends StatelessWidget {
   String text;
+  String textUrl;
 
   CustomToolTip({this.text});
+
+  bool checkUrl() {
+    print(text);
+    if (text.contains("https")) {
+      textUrl = text.split(" ")[0];
+      return true;
+    }
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: Tooltip(preferBelow: false, message: "Copy", child: Text(text)),
+      child: Tooltip(
+        preferBelow: false,
+        message: "Go",
+        // child: Text(text),
+        child: Container(
+          // width: MediaQuery.of(context).size.width * 0.68,
+          width: 270,
+          child: Text.rich(
+            TextSpan(
+              text: text,
+              style: checkUrl()
+                  ? TextStyle(
+                      color: Colors.blueAccent,
+                      decoration: TextDecoration.underline,
+                    )
+                  : null,
+            ),
+          ),
+          padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+          decoration: BoxDecoration(
+              color: AppColors.greyColor2,
+              borderRadius: BorderRadius.circular(8.0)),
+        ),
+      ),
       onTap: () {
-        // print("Testing:~~~~~~~~~~~~~" + text);
-        Clipboard.setData(ClipboardData(text: text));
-        flutterTts.speak(text);
+        // String textUrl = text.split(" ")[0];
+        // print("textUrl:" + textUrl);
+        if (checkUrl == true) {
+          // Clipboard.setData(ClipboardData(text: text));
+          Fluttertoast.showToast(
+              msg: "GO",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIos: 1,
+              backgroundColor: Colors.blueGrey,
+              textColor: Colors.white,
+              fontSize: 14.0);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => StockChartPage(
+                      urlString: textUrl,
+                    )),
+          );
+        }
+
+        // flutterTts.speak(text);
       },
     );
   }

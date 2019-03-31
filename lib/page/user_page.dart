@@ -4,12 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../app_holder.dart';
+import '../models/user_model.dart';
 import 'login_page.dart';
 import 'quiz_page.dart';
 
 Future<FirebaseUser> _firebaseUser = FirebaseAuth.instance.currentUser();
 
 SharedPreferences preferences;
+
 String _username = "User";
 String _photoUrl =
     'https://firebasestorage.googleapis.com/v0/b/fanchat.appspot.com/o/business_avatar_man_businessman_profile_account_contact_person-512.png?alt=media&token=b9ed1227-9993-4be2-a1ae-2c4f3846e489';
@@ -128,7 +130,7 @@ class _UserPageState extends State<UserPage> {
                   ),
                   SizedBox(height: 15.0),
                   Text(
-                    '直覺 情感 積累型投資者',
+                    '點擊下方Quiz按鈕進行測驗',
                     style: TextStyle(
                         fontSize: 17.0,
                         fontStyle: FontStyle.italic,
@@ -145,8 +147,8 @@ class _UserPageState extends State<UserPage> {
                               child: ListView.builder(
                             padding: EdgeInsets.all(8.0),
                             reverse: true,
-                            itemBuilder: (_, int index) => Text("hihi"),
                             itemCount: 1,
+                            itemBuilder: (_, int index) => Text("hihi"),
                           )),
                           Divider(height: 1.0),
                         ]),
@@ -211,6 +213,8 @@ class _UserPageState extends State<UserPage> {
       )),
     );
   }
+
+  void didQuiz() {}
 
   Future<void> _handleSignOut() async {
     googleSignIn.disconnect();

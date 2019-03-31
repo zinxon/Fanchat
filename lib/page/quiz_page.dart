@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import '../app_holder.dart';
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class QuizPage extends StatefulWidget {
   @override
@@ -15,15 +21,18 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   FlutterWebviewPlugin flutterWebviewPlugin = FlutterWebviewPlugin();
-
   Future<FirebaseUser> _firebaseUser = FirebaseAuth.instance.currentUser();
 
-  // String currentUrl =
-  //     "https://www.apesk.com/mbti/submit_email_date_cx_m.asp?code=219.73.34.161&user=20944310";
-  String currentUrl = "";
+  static GlobalKey screen = new GlobalKey();
+
+  String currentUrl =
+      "https://www.apesk.com/mbti/submit_email_date_cx_m.asp?code=219.73.34.161&user=20944310";
+  // String currentUrl = "";
   bool isDone = false;
 
-  var urlString = "https://www.apesk.com/mbti/dati.asp";
+  // var urlString = "https://www.apesk.com/mbti/dati.asp";
+  var urlString =
+      "https://www.apesk.com/mbti/submit_email_date_cx_m.asp?code=219.73.34.161&user=20944310";
 
   launchUrl() {
     setState(() {
@@ -36,7 +45,7 @@ class _QuizPageState extends State<QuizPage> {
     super.initState();
     flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged wvs) {
       print(wvs.type);
-      currentUrl = wvs.url;
+      // currentUrl = wvs.url;
       print("Current Url: " + currentUrl);
       if (currentUrl.contains("user")) {
         setState(() {
@@ -67,6 +76,41 @@ class _QuizPageState extends State<QuizPage> {
     return Future.value(false);
   }
 
+  takeScreenShot() async {
+    RenderRepaintBoundary boundary = screen.currentContext.findRenderObject();
+    ui.Image image = await boundary.toImage();
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    // final directory = (await getApplicationDocumentsDirectory()).path;
+    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List pngBytes = byteData.buffer.asUint8List();
+    print(pngBytes);
+    print("path:" + tempPath);
+    File imgFile = new File('$tempPath/screenshot.png');
+    imgFile.writeAsBytes(pngBytes);
+    final FirebaseVisionImage visionImage =
+        FirebaseVisionImage.fromFile(imgFile);
+    final TextRecognizer textRecognizer =
+        FirebaseVision.instance.textRecognizer();
+    final VisionText visionText =
+        await textRecognizer.processImage(visionImage);
+    String text = visionText.text;
+    String pattern = r"^[A-Z]";
+    RegExp regEx = RegExp(pattern);
+
+    String type = "Couldn't find any mail in the foto! Please try again!";
+    for (TextBlock block in visionText.blocks) {
+      for (TextLine line in block.lines) {
+        // if (regEx.hasMatch(line.text)) {
+        //   type = line.text;
+        // }
+        type = line.text;
+      }
+    }
+    print("vision:" + type);
+    print("hihi");
+  }
+
   Future<void> upload() async {
     try {
       if (currentUrl.contains("user") && _firebaseUser != null) {
@@ -89,6 +133,7 @@ class _QuizPageState extends State<QuizPage> {
         }).catchError((e) {
           print(e);
         });
+        takeScreenShot();
         Fluttertoast.showToast(
             msg: "MBTI測試分析完畢，正在截圖並將分析結果上傳到Firebase",
             toastLength: Toast.LENGTH_SHORT,
@@ -97,13 +142,14 @@ class _QuizPageState extends State<QuizPage> {
             backgroundColor: Colors.blueGrey,
             textColor: Colors.white,
             fontSize: 14.0);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AppHolder(
-                    indexGlobal: 1,
-                  )),
-        );
+        // Navigator.pop(context);
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //       builder: (context) => AppHolder(
+        //             indexGlobal: 1,
+        //           )),
+        // );
       }
     } catch (e) {
       print(e);
@@ -114,29 +160,32 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: _requestPop,
-        child: WebviewScaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text("MBTI性格測試"),
-              actions: <Widget>[
-                isDone
-                    ? IconButton(
-                        icon: Icon(
-                          FontAwesomeIcons.checkSquare,
-                          color: Colors.black,
-                          size: 25.0,
-                        ),
-                        onPressed: upload,
-                      )
-                    : Container()
-              ],
-            ),
-            initialChild: Center(
-              child: CircularProgressIndicator(),
-            ),
-            url: urlString,
-            enableAppScheme: true
-            // hidden: false,
-            ));
+        child: RepaintBoundary(
+          key: screen,
+          child: WebviewScaffold(
+              appBar: AppBar(
+                centerTitle: true,
+                title: Text("MBTI性格測試"),
+                actions: <Widget>[
+                  isDone
+                      ? IconButton(
+                          icon: Icon(
+                            FontAwesomeIcons.checkSquare,
+                            color: Colors.black,
+                            size: 25.0,
+                          ),
+                          onPressed: upload,
+                        )
+                      : Container()
+                ],
+              ),
+              initialChild: Center(
+                child: CircularProgressIndicator(),
+              ),
+              url: urlString,
+              enableAppScheme: true
+              // hidden: false,
+              ),
+        ));
   }
 }
