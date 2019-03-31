@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dialogflow/dialogflow_v2.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:flutter/services.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 
 import '../app_holder.dart';
 import '../api/yahoo_finance.dart';
@@ -13,10 +13,10 @@ import '../models/user_model.dart';
 import 'stock_chart_page.dart';
 
 UserModel _userModel = UserModel.instance;
-FirebaseUser _firebaseUser;
-String _username = "User";
-String _photoUrl =
-    'https://firebasestorage.googleapis.com/v0/b/fanchat.appspot.com/o/business_avatar_man_businessman_profile_account_contact_person-512.png?alt=media&token=b9ed1227-9993-4be2-a1ae-2c4f3846e489';
+// FirebaseUser _firebaseUser;
+// String _username = "User";
+// String _photoUrl =
+// 'https://firebasestorage.googleapis.com/v0/b/fanchat.appspot.com/o/business_avatar_man_businessman_profile_account_contact_person-512.png?alt=media&token=b9ed1227-9993-4be2-a1ae-2c4f3846e489';
 
 class ChatbotPage extends StatefulWidget {
   ChatbotPage({Key key, this.title}) : super(key: key);
@@ -43,15 +43,15 @@ class _ChatbotPageState extends State<ChatbotPage>
   initState() {
     super.initState();
     initTts();
-    FirebaseAuth.instance.currentUser().then((user) {
-      _firebaseUser = user;
-      setState(() {
-        _photoUrl = _firebaseUser.photoUrl;
-        _username = _firebaseUser.displayName;
-      });
-    }).catchError((e) {
-      print(e);
-    });
+    // FirebaseAuth.instance.currentUser().then((user) {
+    //   _firebaseUser = user;
+    //   setState(() {
+    //     _photoUrl = _firebaseUser.photoUrl;
+    //     _username = _firebaseUser.displayName;
+    //   });
+    // }).catchError((e) {
+    // print(e);
+    // });
   }
 
   initTts() {
@@ -199,15 +199,15 @@ class _ChatbotPageState extends State<ChatbotPage>
       print("addStock: " + stockCode);
       List stockList = [stockCode];
       try {
-        if (_firebaseUser != null) {
-          final QuerySnapshot result = await Firestore.instance
-              .collection("users")
-              .where("id", isEqualTo: _firebaseUser.uid)
-              .getDocuments();
-          final List<DocumentSnapshot> documents = result.documents;
+        if (_userModel != null) {
+          // final QuerySnapshot result = await Firestore.instance
+          //     .collection("users")
+          //     .where("id", isEqualTo: _userModel.id)
+          //     .getDocuments();
+          // final List<DocumentSnapshot> documents = result.documents;
           Firestore.instance
               .collection("users")
-              .document(_firebaseUser.uid)
+              .document(_userModel.id)
               .updateData({
             "stockList": FieldValue.arrayUnion(stockList),
           });

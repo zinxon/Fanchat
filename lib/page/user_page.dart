@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../app_holder.dart';
 import '../models/user_model.dart';
 import 'login_page.dart';
 import 'quiz_page.dart';
 
-Future<FirebaseUser> _firebaseUser = FirebaseAuth.instance.currentUser();
+// Future<FirebaseUser> _firebaseUser = FirebaseAuth.instance.currentUser();
+UserModel _userModel = UserModel.instance;
 
 SharedPreferences preferences;
 
-String _username = "User";
-String _photoUrl =
-    'https://firebasestorage.googleapis.com/v0/b/fanchat.appspot.com/o/business_avatar_man_businessman_profile_account_contact_person-512.png?alt=media&token=b9ed1227-9993-4be2-a1ae-2c4f3846e489';
+// String _username = "User";
+// String _photoUrl =
+// 'https://firebasestorage.googleapis.com/v0/b/fanchat.appspot.com/o/business_avatar_man_businessman_profile_account_contact_person-512.png?alt=media&token=b9ed1227-9993-4be2-a1ae-2c4f3846e489';
 
 class UserPage extends StatefulWidget {
   UserPage();
@@ -71,14 +72,14 @@ class _UserPageState extends State<UserPage> {
 
   void initState() {
     super.initState();
-    _firebaseUser.then((user) {
-      setState(() {
-        _photoUrl = user.photoUrl;
-        _username = user.displayName;
-      });
-    }).catchError((e) {
-      print(e);
-    });
+    // _firebaseUser.then((user) {
+    //   setState(() {
+    //     _photoUrl = user.photoUrl;
+    //     _username = user.displayName;
+    //   });
+    // }).catchError((e) {
+    //   print(e);
+    // });
     // _getUserInfo();
     // _firebaseUser = FirebaseAuth.instance.currentUser();
     // FirebaseAuth.instance.currentUser().then((user) {
@@ -114,7 +115,7 @@ class _UserPageState extends State<UserPage> {
                       decoration: BoxDecoration(
                           color: Colors.red,
                           image: DecorationImage(
-                              image: NetworkImage(_photoUrl),
+                              image: NetworkImage(_userModel.profilePicture),
                               fit: BoxFit.cover),
                           borderRadius: BorderRadius.all(Radius.circular(75.0)),
                           boxShadow: [
@@ -122,7 +123,7 @@ class _UserPageState extends State<UserPage> {
                           ])),
                   SizedBox(height: 25.0),
                   Text(
-                    _username,
+                    _userModel.username,
                     style: TextStyle(
                         fontSize: 30.0,
                         fontWeight: FontWeight.bold,
