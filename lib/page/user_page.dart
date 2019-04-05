@@ -7,7 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../app_holder.dart';
 import '../models/user_model.dart';
 import 'login_page.dart';
-import 'quiz_page.dart';
+import 'result_page.dart';
+import 'webviewquiz_page.dart';
 
 // Future<FirebaseUser> _firebaseUser = FirebaseAuth.instance.currentUser();
 UserModel _userModel = UserModel.instance;
@@ -132,7 +133,9 @@ class _UserPageState extends State<UserPage> {
                   ),
                   SizedBox(height: 15.0),
                   Text(
-                    '點擊下方Quiz按鈕進行測驗',
+                    _userModel.didQuiz
+                        ? _userModel.investorType
+                        : '點擊下方Quiz按鈕進行MBTI測驗',
                     style: TextStyle(
                         fontSize: 17.0,
                         fontStyle: FontStyle.italic,
@@ -164,26 +167,26 @@ class _UserPageState extends State<UserPage> {
                                         _userModel
                                             .stockList[index].stockCode) ??
                                     Container(),
-                                onDismissed: (direction) {
-                                  if (direction ==
-                                      DismissDirection.startToEnd) {
-                                    Fluttertoast.showToast(msg: "Delete");
-                                    if (_userModel.stockList.contains(
-                                        _userModel.stockList.removeAt(index))) {
-                                      setState(() {
-                                        _userModel.stockList.remove(_userModel
-                                            .stockList
-                                            .removeAt(index));
-                                      });
-                                    }
-                                  } else {
-                                    if (direction ==
-                                        DismissDirection.endToStart) {
-                                      Fluttertoast.showToast(msg: "Archive");
-                                      // Archive functionality
-                                    }
-                                  }
-                                },
+                                // onDismissed: (direction) {
+                                //   if (direction ==
+                                //       DismissDirection.startToEnd) {
+                                //     Fluttertoast.showToast(msg: "Delete");
+                                //     if (_userModel.stockList.contains(
+                                //         _userModel.stockList.removeAt(index))) {
+                                //       setState(() {
+                                //         _userModel.stockList.remove(_userModel
+                                //             .stockList
+                                //             .removeAt(index));
+                                //       });
+                                //     }
+                                //   } else {
+                                //     if (direction ==
+                                //         DismissDirection.endToStart) {
+                                //       Fluttertoast.showToast(msg: "Archive");
+                                //       // Archive functionality
+                                //     }
+                                //   }
+                                // },
                               );
                             },
                           )),
@@ -196,28 +199,47 @@ class _UserPageState extends State<UserPage> {
                           height: 30.0,
                           width: 95.0,
                           child: Material(
-                            borderRadius: BorderRadius.circular(20.0),
-                            shadowColor: Colors.greenAccent,
-                            color: Colors.green,
-                            elevation: 7.0,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => QuizPage()),
-                                );
-                              },
-                              child: Center(
-                                child: Text(
-                                  'Quiz',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'Montserrat'),
-                                ),
-                              ),
-                            ),
-                          )),
+                              borderRadius: BorderRadius.circular(20.0),
+                              shadowColor: Colors.greenAccent,
+                              color: Colors.green,
+                              elevation: 7.0,
+                              child: _userModel.didQuiz
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => ResultPage(
+                                                    url: _userModel.resultUrl,
+                                                  )),
+                                        );
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          'Result',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'Montserrat'),
+                                        ),
+                                      ),
+                                    )
+                                  : GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => QuizPage()),
+                                        );
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          'Quiz',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'Montserrat'),
+                                        ),
+                                      ),
+                                    ))),
                       // SizedBox(
                       //   height: 300,
                       // ),
@@ -345,7 +367,9 @@ class _UserPageState extends State<UserPage> {
     );
   }
 
-  void didQuiz() {}
+  void didQuiz() {
+    if (_userModel.didQuiz) {}
+  }
 
   Future<void> _handleSignOut() async {
     googleSignIn.disconnect();

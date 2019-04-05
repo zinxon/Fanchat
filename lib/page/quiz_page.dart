@@ -24,6 +24,16 @@ class _QuizPageState extends State<QuizPage> {
   Future<FirebaseUser> _firebaseUser = FirebaseAuth.instance.currentUser();
 
   static GlobalKey screen = new GlobalKey();
+  List _cities = [
+    "Cluj-Napoca",
+    "Bucuresti",
+    "Timisoara",
+    "Brasov",
+    "Constanta"
+  ];
+
+  List<DropdownMenuItem<String>> _dropDownMenuItems;
+  String _currentCity;
 
   String currentUrl =
       "https://www.apesk.com/mbti/submit_email_date_cx_m.asp?code=219.73.34.161&user=20944310";
@@ -40,8 +50,24 @@ class _QuizPageState extends State<QuizPage> {
     });
   }
 
+  List<DropdownMenuItem<String>> getDropDownMenuItems() {
+    List<DropdownMenuItem<String>> items = new List();
+    for (String city in _cities) {
+      items.add(new DropdownMenuItem(value: city, child: new Text(city)));
+    }
+    return items;
+  }
+
+  void changedDropDownItem(String selectedCity) {
+    setState(() {
+      _currentCity = selectedCity;
+    });
+  }
+
   @override
   void initState() {
+    _dropDownMenuItems = getDropDownMenuItems();
+    _currentCity = _dropDownMenuItems[0].value;
     super.initState();
     flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged wvs) {
       print(wvs.type);
@@ -160,32 +186,34 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: _requestPop,
-        child: RepaintBoundary(
-          key: screen,
-          child: WebviewScaffold(
-              appBar: AppBar(
-                centerTitle: true,
-                title: Text("MBTI性格測試"),
-                actions: <Widget>[
-                  isDone
-                      ? IconButton(
-                          icon: Icon(
-                            FontAwesomeIcons.checkSquare,
-                            color: Colors.black,
-                            size: 25.0,
-                          ),
-                          onPressed: upload,
-                        )
-                      : Container()
-                ],
-              ),
-              initialChild: Center(
-                child: CircularProgressIndicator(),
-              ),
-              url: urlString,
-              enableAppScheme: true
-              // hidden: false,
-              ),
-        ));
+        child: WebviewScaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text("MBTI性格測試"),
+              actions: <Widget>[
+                DropdownButton(
+                  value: _currentCity,
+                  items: _dropDownMenuItems,
+                  onChanged: changedDropDownItem,
+                ),
+                isDone
+                    ? IconButton(
+                        icon: Icon(
+                          FontAwesomeIcons.checkSquare,
+                          color: Colors.black,
+                          size: 25.0,
+                        ),
+                        onPressed: upload,
+                      )
+                    : Container(),
+              ],
+            ),
+            initialChild: Center(
+              child: CircularProgressIndicator(),
+            ),
+            url: urlString,
+            enableAppScheme: true
+            // hidden: false,
+            ));
   }
 }

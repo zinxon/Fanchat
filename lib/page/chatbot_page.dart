@@ -335,6 +335,8 @@ class CustomToolTip extends StatelessWidget {
 
   bool checkUrl() {
     print(text);
+    print(Uri.http("$text", ""));
+    Uri.parse(text);
     if (text.contains("https")) {
       textUrl = text.split(" ")[0];
       return true;
@@ -372,7 +374,9 @@ class CustomToolTip extends StatelessWidget {
       onTap: () {
         // String textUrl = text.split(" ")[0];
         // print("textUrl:" + textUrl);
-        if (checkUrl == true) {
+        // print(checkUrl());
+        if (checkUrl()) {
+          // print("hihi");
           // Clipboard.setData(ClipboardData(text: text));
           Fluttertoast.showToast(
               msg: "GO",

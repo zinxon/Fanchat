@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'page/chatbot_page.dart';
 import 'page/user_page.dart';
 import 'page/home_page.dart';
+import 'page/webview_page.dart';
 // import 'package:flutter/services.dart';
 
 class AppHolder extends StatefulWidget {
@@ -21,7 +22,7 @@ class _AppHolderState extends State<AppHolder> {
   @override
   void initState() {
     super.initState();
-    pageList..add(HomePage())..add(UserPage());
+    pageList..add(WebViewPage())..add(UserPage());
   }
 
   @override
@@ -30,9 +31,9 @@ class _AppHolderState extends State<AppHolder> {
       body: SafeArea(
         child: Container(
           child: pageList[_index],
-          height: _index == 0
-              ? MediaQuery.of(context).size.height * 0.85
-              : MediaQuery.of(context).size.height,
+          // height: _index == 0
+          //     ? MediaQuery.of(context).size.height * 0.85
+          //     : MediaQuery.of(context).size.height,
         ),
         // bottom: true,
       ),
