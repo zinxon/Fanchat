@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../app_holder.dart';
 import '../models/user_model.dart';
+import '../models/stock_model.dart';
 import 'login_page.dart';
 import 'result_page.dart';
-import 'webviewquiz_page.dart';
+import 'quiz_page.dart';
+import 'webview_page.dart';
 
-// Future<FirebaseUser> _firebaseUser = FirebaseAuth.instance.currentUser();
 UserModel _userModel = UserModel.instance;
-
-SharedPreferences preferences;
-
-// String _username = "User";
-// String _photoUrl =
-// 'https://firebasestorage.googleapis.com/v0/b/fanchat.appspot.com/o/business_avatar_man_businessman_profile_account_contact_person-512.png?alt=media&token=b9ed1227-9993-4be2-a1ae-2c4f3846e489';
 
 class UserPage extends StatefulWidget {
   UserPage();
@@ -36,62 +31,21 @@ class _UserPageState extends State<UserPage> {
     return Future.value(false);
   }
 
-  // Future<Null> _function() async {
-  //   // /**
-  //   // This Function will be called every single time
-  //   // when application is opened and it will check
-  //   // if the value inside Shared Preference exist or not
-  //   // **/
-  //   SharedPreferences prefs;
-  //   prefs = await SharedPreferences.getInstance();
-  //   this.setState(() {
-  //     if (prefs.getString("username") != null) {
-  //       loggedIn = true;
-  //     } else {
-  //       loggedIn = false;
-  //     }
-  //   });
-  // }
-
-  // Future<Null> _getUserInfo() async {
-
-  //   final FirebaseUser user = await _auth.currentUser();
-  //   final userid = user.uid;
-  //   // preferences = await SharedPreferences.getInstance();
-  //   // String uid = preferences.getString("id");
-  //   final QuerySnapshot result = await Firestore.instance
-  //       .collection("users")
-  //       .where("id", isEqualTo: userid)
-  //       .getDocuments();
-  //   final List<DocumentSnapshot> documents = result.documents;
-  //   _username = documents[0]['username'];
-  //   _photoUrl = documents[0]['photoUrl'];
-  //   print("uid:" + userid);
-  //   print("username:" + _username);
-  //   // _username = preferences.getString("username");
-  //   // _photoUrl = preferences.getString("photoUrl");
-  // }
+  Future<void> update() async {
+    final QuerySnapshot result = await Firestore.instance
+        .collection("users")
+        .where("id", isEqualTo: _userModel.id)
+        .getDocuments();
+    final List<DocumentSnapshot> documents = result.documents;
+    var userDoc = documents[0].data;
+    print("Here is user json: $userDoc");
+    _userModel.updateUser = userDoc;
+    print("UserModel is updated");
+  }
 
   void initState() {
     super.initState();
-    // _firebaseUser.then((user) {
-    //   setState(() {
-    //     _photoUrl = user.photoUrl;
-    //     _username = user.displayName;
-    //   });
-    // }).catchError((e) {
-    //   print(e);
-    // });
-    // _getUserInfo();
-    // _firebaseUser = FirebaseAuth.instance.currentUser();
-    // FirebaseAuth.instance.currentUser().then((user) {
-    //   setState(() {
-    //     _photoUrl = user.photoUrl;
-    //     _username = user.displayName;
-    //   });
-    // }).catchError((e) {
-    //   print(e);
-    // });
+    update();
   }
 
   @override
@@ -154,19 +108,26 @@ class _UserPageState extends State<UserPage> {
                           Flexible(
                               child: ListView.builder(
                             padding: EdgeInsets.all(8.0),
-                            // reverse: true,
                             itemCount: _userModel.stockCodeList.length,
-                            // itemBuilder: (_, int index) =>
-                            //     Text(_userModel.stockCodeList[index]),
                             itemBuilder: (_, int index) {
                               return Dismissible(
                                 key: Key(_userModel.stockCodeList[index]),
                                 background: _myHiddenContainer() ?? Container(),
-                                child: _myListContainer(
-                                        _userModel.stockList[index].stockName,
-                                        _userModel
-                                            .stockList[index].stockCode) ??
-                                    Container(),
+                                child: InkWell(
+                                  highlightColor: Colors.orange,
+                                  onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => _dialogBuilder(
+                                            context,
+                                            _userModel.stockList[index]));
+                                  },
+                                  child: _myListContainer(
+                                          _userModel.stockList[index].stockName,
+                                          _userModel
+                                              .stockList[index].stockCode) ??
+                                      Container(),
+                                ),
                                 // onDismissed: (direction) {
                                 //   if (direction ==
                                 //       DismissDirection.startToEnd) {
@@ -318,22 +279,71 @@ class _UserPageState extends State<UserPage> {
                     ),
                   ),
                 ),
-                // Align(
-                //   alignment: Alignment.centerRight,
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                // child: Container(
-                //   child: Text(taskTime,
-                //       style:
-                //           TextStyle(fontSize: 18.0, color: Colors.black45)),
-                // ),
-                //   ),
-                // ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _dialogBuilder(BuildContext context, Stock stock) {
+    return SimpleDialog(
+      children: <Widget>[
+        Center(
+          child: Card(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    ListTile(
+                      // leading: Icon(Icons.album),
+                      title: Text('${stock.stockName} (${stock.stockCode})'),
+                      subtitle: Text(
+                          '界別: ${stock.sector}\n行業: ${stock.industry}\n全職員工: ${stock.employees}\n描述: ${stock.discribe}'),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WebViewPage(
+                                    url: stock.website
+                                        .replaceFirstMapped('http', (m) {
+                                      return 'https';
+                                    }),
+                                    isBack: true,
+                                    title: stock.stockName,
+                                  )),
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 16.0),
+                        child: Text.rich(TextSpan(
+                          children: [
+                            TextSpan(text: '公司網頁: '),
+                            TextSpan(
+                                text: '${stock.website}'
+                                    .replaceFirstMapped('http', (m) {
+                                  return 'https';
+                                }),
+                                style: TextStyle(
+                                  color: Colors.blueAccent,
+                                  decoration: TextDecoration.underline,
+                                ))
+                          ],
+                        )),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
     );
   }
 
@@ -365,35 +375,6 @@ class _UserPageState extends State<UserPage> {
         ],
       ),
     );
-  }
-
-  void didQuiz() {
-    if (_userModel.didQuiz) {}
-  }
-
-  Future<void> _handleSignOut() async {
-    googleSignIn.disconnect();
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
-  }
-
-  Future<Null> logoutUser() async {
-    //logout user
-    SharedPreferences prefs;
-    prefs = await SharedPreferences.getInstance();
-    await googleSignIn.signOut();
-    prefs.clear();
-    prefs.commit();
-    //   this.setState(() {
-    //     /*
-    //    updating the value of loggedIn to false so it will
-    //    automatically trigger the screen to display loginScaffold.
-    // */
-    //     loggedIn = false;
-    //   });
-    prefs.setBool("isLogged", false);
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
   Future<Null> _logout() async {

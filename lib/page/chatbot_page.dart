@@ -10,13 +10,9 @@ import '../app_holder.dart';
 import '../api/yahoo_finance.dart';
 import '../style/theme.dart' show AppColors;
 import '../models/user_model.dart';
-import 'stock_chart_page.dart';
+import 'webview_page.dart';
 
 UserModel _userModel = UserModel.instance;
-// FirebaseUser _firebaseUser;
-// String _username = "User";
-// String _photoUrl =
-// 'https://firebasestorage.googleapis.com/v0/b/fanchat.appspot.com/o/business_avatar_man_businessman_profile_account_contact_person-512.png?alt=media&token=b9ed1227-9993-4be2-a1ae-2c4f3846e489';
 
 class ChatbotPage extends StatefulWidget {
   ChatbotPage({Key key, this.title}) : super(key: key);
@@ -43,15 +39,6 @@ class _ChatbotPageState extends State<ChatbotPage>
   initState() {
     super.initState();
     initTts();
-    // FirebaseAuth.instance.currentUser().then((user) {
-    //   _firebaseUser = user;
-    //   setState(() {
-    //     _photoUrl = _firebaseUser.photoUrl;
-    //     _username = _firebaseUser.displayName;
-    //   });
-    // }).catchError((e) {
-    // print(e);
-    // });
   }
 
   initTts() {
@@ -74,14 +61,12 @@ class _ChatbotPageState extends State<ChatbotPage>
                 autofocus: true,
                 controller: _textController,
                 onSubmitted: _handleSubmitted,
-                decoration:
-                    //   InputDecoration.collapsed(hintText: "Send a message",),
-                    InputDecoration(
-                        hintText: "Send a message",
-                        contentPadding: EdgeInsets.all(10.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        )),
+                decoration: InputDecoration(
+                    hintText: "Send a message",
+                    contentPadding: EdgeInsets.all(10.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    )),
               ),
             ),
             Container(
@@ -110,7 +95,6 @@ class _ChatbotPageState extends State<ChatbotPage>
       name: "FanChat",
       type: false,
     );
-    // print(response.getListMessage());
     if (response.queryResult.action == "add_stock") {
       print("action: " + response.queryResult.action);
       addStock(response);
@@ -334,9 +318,9 @@ class CustomToolTip extends StatelessWidget {
   CustomToolTip({this.text});
 
   bool checkUrl() {
-    print(text);
-    print(Uri.http("$text", ""));
-    Uri.parse(text);
+    // print('In checkUrl: ' + text);
+    // print(Uri.http("$text", ""));
+    // Uri.parse(text);
     if (text.contains("https")) {
       textUrl = text.split(" ")[0];
       return true;
@@ -352,19 +336,20 @@ class CustomToolTip extends StatelessWidget {
         message: "Go",
         // child: Text(text),
         child: Container(
-          // width: MediaQuery.of(context).size.width * 0.68,
           width: 270,
-          child: Text.rich(
-            TextSpan(
-              text: text,
-              style: checkUrl()
-                  ? TextStyle(
-                      color: Colors.blueAccent,
-                      decoration: TextDecoration.underline,
-                    )
-                  : null,
-            ),
-          ),
+          child: Text.rich(checkUrl()
+              ? TextSpan(
+                  children: [
+                    TextSpan(
+                        text: text.split(' ')[0],
+                        style: TextStyle(
+                          color: Colors.blueAccent,
+                          decoration: TextDecoration.underline,
+                        )),
+                    TextSpan(text: text.split(' ')[1])
+                  ],
+                )
+              : TextSpan(text: text)),
           padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
           decoration: BoxDecoration(
               color: AppColors.greyColor2,
@@ -389,8 +374,10 @@ class CustomToolTip extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => StockChartPage(
-                      urlString: textUrl,
+                builder: (context) => WebViewPage(
+                      url: textUrl,
+                      isBack: true,
+                      title: "股票預測圖表",
                     )),
           );
         }

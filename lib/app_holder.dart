@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'page/chatbot_page.dart';
 import 'page/user_page.dart';
-import 'page/home_page.dart';
 import 'page/webview_page.dart';
-// import 'package:flutter/services.dart';
 
 class AppHolder extends StatefulWidget {
-  AppHolder({Key key, this.title, this.indexGlobal}) : super(key: key);
+  AppHolder({Key key, this.title, this.indexGlobal = 0}) : super(key: key);
 
   final String title;
-  int indexGlobal = 0;
+  int indexGlobal;
 
   @override
   _AppHolderState createState() => _AppHolderState();
@@ -17,12 +15,15 @@ class AppHolder extends StatefulWidget {
 
 class _AppHolderState extends State<AppHolder> {
   List<Widget> pageList = List();
-  int _index = 0;
 
   @override
   void initState() {
     super.initState();
-    pageList..add(WebViewPage())..add(UserPage());
+    pageList
+      ..add(WebViewPage(
+        url: 'https://hk.finance.yahoo.com',
+      ))
+      ..add(UserPage());
   }
 
   @override
@@ -30,12 +31,8 @@ class _AppHolderState extends State<AppHolder> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          child: pageList[_index],
-          // height: _index == 0
-          //     ? MediaQuery.of(context).size.height * 0.85
-          //     : MediaQuery.of(context).size.height,
+          child: pageList[widget.indexGlobal],
         ),
-        // bottom: true,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -61,7 +58,7 @@ class _AppHolderState extends State<AppHolder> {
               color: Colors.white,
               onPressed: () {
                 setState(() {
-                  _index = 0;
+                  widget.indexGlobal = 0;
                 });
               },
             ),
@@ -70,7 +67,7 @@ class _AppHolderState extends State<AppHolder> {
               color: Colors.white,
               onPressed: () {
                 setState(() {
-                  _index = 1;
+                  widget.indexGlobal = 1;
                 });
               },
             )

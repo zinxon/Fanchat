@@ -627,7 +627,6 @@ class _LoginPageState extends State<LoginPage>
           password: loginPasswordController.text);
       assert(user.email != null);
       assert(user.displayName != null);
-      // print("hihi");
       assert(!user.isAnonymous);
       assert(await user.getIdToken() != null);
       final FirebaseUser currentUser = await _auth.currentUser();

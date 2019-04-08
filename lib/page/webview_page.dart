@@ -4,8 +4,17 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewPage extends StatefulWidget {
   final Widget child;
+  String title;
+  String url;
+  bool isBack;
 
-  WebViewPage({Key key, this.child}) : super(key: key);
+  WebViewPage(
+      {Key key,
+      this.child,
+      this.isBack = false,
+      this.title = 'FanChat',
+      this.url})
+      : super(key: key);
 
   _WebViewPageState createState() => _WebViewPageState();
 }
@@ -18,8 +27,8 @@ class _WebViewPageState extends State<WebViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FanChat'),
-        // This drop down menu demonstrates that Flutter widgets can be shown over the web view.
+        title: Text(widget.title),
+        automaticallyImplyLeading: widget.isBack,
         actions: <Widget>[
           NavigationControls(_controller.future),
         ],
@@ -28,7 +37,7 @@ class _WebViewPageState extends State<WebViewPage> {
       // to allow calling Scaffold.of(context) so we can show a snackbar.
       body: Builder(builder: (BuildContext context) {
         return WebView(
-          initialUrl: 'https://hk.finance.yahoo.com',
+          initialUrl: widget.url,
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (WebViewController webViewController) {
             _controller.complete(webViewController);
