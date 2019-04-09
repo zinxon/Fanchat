@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../app_holder.dart';
 import '../models/user_model.dart';
 import '../models/stock_model.dart';
+import '../widgets/card_widget.dart';
 import 'login_page.dart';
 import 'result_page.dart';
 import 'quiz_page.dart';
@@ -289,61 +290,8 @@ class _UserPageState extends State<UserPage> {
 
   Widget _dialogBuilder(BuildContext context, Stock stock) {
     return SimpleDialog(
-      children: <Widget>[
-        Center(
-          child: Card(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    ListTile(
-                      // leading: Icon(Icons.album),
-                      title: Text('${stock.stockName} (${stock.stockCode})'),
-                      subtitle: Text(
-                          '界別: ${stock.sector}\n行業: ${stock.industry}\n全職員工: ${stock.employees}\n描述: ${stock.discribe}'),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WebViewPage(
-                                    url: stock.website
-                                        .replaceFirstMapped('http', (m) {
-                                      return 'https';
-                                    }),
-                                    isBack: true,
-                                    title: stock.stockName,
-                                  )),
-                        );
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 16.0),
-                        child: Text.rich(TextSpan(
-                          children: [
-                            TextSpan(text: '公司網頁: '),
-                            TextSpan(
-                                text: '${stock.website}'
-                                    .replaceFirstMapped('http', (m) {
-                                  return 'https';
-                                }),
-                                style: TextStyle(
-                                  color: Colors.blueAccent,
-                                  decoration: TextDecoration.underline,
-                                ))
-                          ],
-                        )),
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
-        )
-      ],
+      backgroundColor: Colors.transparent,
+      children: <Widget>[Center(child: cardWidget(context, stock))],
     );
   }
 

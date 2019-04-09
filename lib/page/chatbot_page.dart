@@ -3,13 +3,13 @@ import 'package:flutter_dialogflow/dialogflow_v2.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:flutter/services.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 
 import '../app_holder.dart';
 import '../api/yahoo_finance.dart';
 import '../style/theme.dart' show AppColors;
 import '../models/user_model.dart';
+import '../models/stock_model.dart';
+import '../widgets/card_widget.dart';
 import 'webview_page.dart';
 
 UserModel _userModel = UserModel.instance;
@@ -83,18 +83,32 @@ class _ChatbotPageState extends State<ChatbotPage>
 
   void _response(query) async {
     _textController.clear();
+    bool isGetInfo = false;
+    Stock stock;
     AuthGoogle authGoogle =
         await AuthGoogle(fileJson: "assets/config/dialogflow.json").build();
     Dialogflow dialogflow = Dialogflow(
         authGoogle: authGoogle, language: Language.CHINESE_CANTONESE);
     AIResponse response = await dialogflow.detectIntent(query);
+    if (response.queryResult.action == "get_stock_information") {
+      var temp = await Firestore.instance
+          .collection("stockCode")
+          .where("stockCode", isEqualTo: response.getMessage())
+          .getDocuments();
+      var tempData = temp.documents[0].data;
+      print(tempData);
+      stock = Stock.fromFirebase(tempData);
+      print(stock.website);
+      isGetInfo = true;
+    }
     ChatMessage message = ChatMessage(
-      // text: response.getMessage() ??
-      //     CardDialogflow(response.getListMessage()[0]).title,
-      text: response.getMessage(),
-      name: "FanChat",
-      type: false,
-    );
+        text: response.getMessage(),
+        // text: response.getListMessage()[0],
+        // text: CardDialogflow(response.getListMessage()[0]['text']['text']).title,
+        name: "FanChat",
+        type: false,
+        isGetInfo: isGetInfo,
+        stock: stock);
     if (response.queryResult.action == "add_stock") {
       print("action: " + response.queryResult.action);
       addStock(response);
@@ -213,11 +227,14 @@ class _ChatbotPageState extends State<ChatbotPage>
 }
 
 class ChatMessage extends StatelessWidget {
-  ChatMessage({this.text, this.name, this.type});
+  ChatMessage(
+      {this.text, this.name, this.type, this.isGetInfo = false, this.stock});
 
   final String text;
   final String name;
+  final bool isGetInfo;
   final bool type;
+  final Stock stock;
 
   List<Widget> otherMessage(context) {
     return <Widget>[
@@ -242,15 +259,17 @@ class ChatMessage extends StatelessWidget {
                 ),
               ],
             ),
-            Container(
-              // margin: const EdgeInsets.only(top: 10.0),
-              // child: Text(text),
-              child: GestureDetector(
-                child: CustomToolTip(
-                  text: text,
-                ),
-              ),
-            ),
+            isGetInfo
+                ? cardWidget(context, stock)
+                : Container(
+                    // margin: const EdgeInsets.only(top: 10.0),
+                    // child: Text(text),
+                    child: GestureDetector(
+                      child: CustomToolTip(
+                        text: text,
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

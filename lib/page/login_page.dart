@@ -11,7 +11,6 @@ import '../app_holder.dart';
 import '../style/theme.dart' as Theme;
 import '../utils/bubble_indication_painter.dart';
 import '../models/user_model.dart';
-import '../models/stock_model.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
