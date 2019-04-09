@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,10 +7,10 @@ import '../app_holder.dart';
 import '../models/user_model.dart';
 import '../models/stock_model.dart';
 import '../widgets/card_widget.dart';
-import 'login_page.dart';
-import 'result_page.dart';
-import 'quiz_page.dart';
+import '../widgets/list_widget.dart';
 import 'webview_page.dart';
+import 'login_page.dart';
+import 'quiz_page.dart';
 
 UserModel _userModel = UserModel.instance;
 
@@ -41,6 +40,16 @@ class _UserPageState extends State<UserPage> {
     var userDoc = documents[0].data;
     print("Here is user json: $userDoc");
     _userModel.updateUser = userDoc;
+    for (int i = 0; i < _userModel.stockCodeList.length; i++) {
+      var temp = await Firestore.instance
+          .collection("stockCode")
+          .where("stockCode", isEqualTo: _userModel.stockCodeList[i])
+          .getDocuments();
+      var tempData = temp.documents[0].data;
+      print(tempData);
+      _userModel.setStockList = tempData;
+      // Stock(temp.documents[0].data);
+    }
     print("UserModel is updated");
   }
 
@@ -104,7 +113,7 @@ class _UserPageState extends State<UserPage> {
                       Scrollbar(
                           child: Container(
                         height: 280,
-                        width: MediaQuery.of(context).size.height * 0.85,
+                        width: MediaQuery.of(context).size.width * 0.85,
                         child: Column(children: <Widget>[
                           Flexible(
                               child: ListView.builder(
@@ -113,7 +122,8 @@ class _UserPageState extends State<UserPage> {
                             itemBuilder: (_, int index) {
                               return Dismissible(
                                 key: Key(_userModel.stockCodeList[index]),
-                                background: _myHiddenContainer() ?? Container(),
+                                background:
+                                    myHiddenContainer(context) ?? Container(),
                                 child: InkWell(
                                   highlightColor: Colors.orange,
                                   onTap: () {
@@ -123,12 +133,13 @@ class _UserPageState extends State<UserPage> {
                                             context,
                                             _userModel.stockList[index]));
                                   },
-                                  child: _myListContainer(
+                                  child: myListContainer(
                                           _userModel.stockList[index].stockName,
                                           _userModel
                                               .stockList[index].stockCode) ??
                                       Container(),
                                 ),
+
                                 // onDismissed: (direction) {
                                 //   if (direction ==
                                 //       DismissDirection.startToEnd) {
@@ -171,7 +182,9 @@ class _UserPageState extends State<UserPage> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => ResultPage(
+                                              builder: (context) => WebViewPage(
+                                                    isBack: true,
+                                                    title: 'Result',
                                                     url: _userModel.resultUrl,
                                                   )),
                                         );
@@ -202,9 +215,6 @@ class _UserPageState extends State<UserPage> {
                                         ),
                                       ),
                                     ))),
-                      // SizedBox(
-                      //   height: 300,
-                      // ),
                       Container(
                           margin: const EdgeInsets.only(top: 290, left: 230.0),
                           height: 30.0,
@@ -235,93 +245,10 @@ class _UserPageState extends State<UserPage> {
     );
   }
 
-  Widget _myListContainer(String taskname, String subtask) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        height: 120.0,
-        child: Material(
-          color: Colors.white,
-          elevation: 14.0,
-          shadowColor: Color(0x802196F3),
-          child: Container(
-            child: Row(
-              children: <Widget>[
-                Container(
-                  height: 80.0,
-                  width: 10.0,
-                  color: Colors.orange,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Container(
-                            child: Text(taskname,
-                                style: TextStyle(
-                                    fontSize: 24.0,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Container(
-                            child: Text(subtask,
-                                style: TextStyle(
-                                    fontSize: 18.0, color: Colors.blueAccent)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _dialogBuilder(BuildContext context, Stock stock) {
     return SimpleDialog(
       backgroundColor: Colors.transparent,
-      children: <Widget>[Center(child: cardWidget(context, stock))],
-    );
-  }
-
-  Widget _myHiddenContainer() {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      color: Colors.orange,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-                icon: Icon(FontAwesomeIcons.solidTrashAlt),
-                color: Colors.white,
-                onPressed: () {
-                  setState(() {});
-                }),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-                icon: Icon(FontAwesomeIcons.archive),
-                color: Colors.white,
-                onPressed: () {
-                  setState(() {});
-                }),
-          ),
-        ],
-      ),
+      children: <Widget>[Center(child: cardWidget(context, stock, false))],
     );
   }
 

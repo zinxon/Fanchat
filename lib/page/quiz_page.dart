@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/user_model.dart';
+import '../style/theme.dart' show TextStyles;
 import '../app_holder.dart';
 
 class QuizPage extends StatefulWidget {
@@ -165,7 +166,13 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MBTI性格測試'),
+        iconTheme: IconThemeData(
+          color: Colors.white, //change your color here
+        ),
+        title: Text(
+          'MBTI性格測試',
+          style: TextStyles.appBarTitle,
+        ),
         centerTitle: true,
         actions: <Widget>[
           isDone
@@ -182,7 +189,7 @@ class _QuizPageState extends State<QuizPage> {
                     IconButton(
                         icon: Icon(
                           FontAwesomeIcons.checkSquare,
-                          color: Colors.black,
+                          color: Colors.white,
                           size: 25.0,
                         ),
                         onPressed: _showDialog)
@@ -191,8 +198,6 @@ class _QuizPageState extends State<QuizPage> {
               : Container()
         ],
       ),
-      // We're using a Builder here so we have a context that is below the Scaffold
-      // to allow calling Scaffold.of(context) so we can show a snackbar.
       body: Builder(builder: (BuildContext context) {
         return WebView(
           initialUrl: urlS,

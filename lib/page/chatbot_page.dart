@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../app_holder.dart';
 import '../api/yahoo_finance.dart';
-import '../style/theme.dart' show AppColors;
+import '../style/theme.dart' show AppColors, TextStyles;
 import '../models/user_model.dart';
 import '../models/stock_model.dart';
 import '../widgets/card_widget.dart';
@@ -154,12 +154,15 @@ class _ChatbotPageState extends State<ChatbotPage>
       onWillPop: _requestPop,
       child: Scaffold(
           appBar: AppBar(
-            title: Text("FanChat"),
+            title: Text(
+              "FanChat",
+              style: TextStyles.appBarTitle,
+            ),
             automaticallyImplyLeading: true,
             centerTitle: true,
             leading: IconButton(
               icon: Icon(Icons.home),
-              color: Colors.black,
+              color: Colors.white,
               onPressed: () {
                 Navigator.push(
                     context,
@@ -195,7 +198,7 @@ class _ChatbotPageState extends State<ChatbotPage>
     if (msgS.contains("-")) {
       String stockCode = msgS.split("-")[1].substring(1);
       print("addStock: " + stockCode);
-      List stockList = [stockCode];
+      List stockCodeList = [stockCode];
       try {
         if (_userModel != null) {
           // final QuerySnapshot result = await Firestore.instance
@@ -207,7 +210,7 @@ class _ChatbotPageState extends State<ChatbotPage>
               .collection("users")
               .document(_userModel.id)
               .updateData({
-            "stockList": FieldValue.arrayUnion(stockList),
+            "stockCodeList": FieldValue.arrayUnion(stockCodeList),
           });
 
           Fluttertoast.showToast(
@@ -260,7 +263,7 @@ class ChatMessage extends StatelessWidget {
               ],
             ),
             isGetInfo
-                ? cardWidget(context, stock)
+                ? cardWidget(context, stock, true)
                 : Container(
                     // margin: const EdgeInsets.only(top: 10.0),
                     // child: Text(text),

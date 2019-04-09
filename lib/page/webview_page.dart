@@ -2,11 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../style/theme.dart' as Theme;
+
 class WebViewPage extends StatefulWidget {
   final Widget child;
-  String title;
-  String url;
-  bool isBack;
+  final String title;
+  final String url;
+  final bool isBack;
 
   WebViewPage(
       {Key key,
@@ -27,7 +29,13 @@ class _WebViewPageState extends State<WebViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(
+          widget.title,
+          style: Theme.TextStyles.appBarTitle,
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         automaticallyImplyLeading: widget.isBack,
         actions: <Widget>[
           NavigationControls(_controller.future),

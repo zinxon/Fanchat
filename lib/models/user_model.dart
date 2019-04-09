@@ -32,9 +32,9 @@ class UserModel {
     _userModel._resultUrl = parsedJson['resultUrl'];
     _userModel._didQuiz = parsedJson['didQuiz'];
     List<String> temp = [];
-    for (int i = 0; i < parsedJson['stockList'].length; i++) {
-      print(parsedJson['stockList'][i].toString());
-      temp.add(parsedJson['stockList'][i].toString());
+    for (int i = 0; i < parsedJson['stockCodeList'].length; i++) {
+      print(parsedJson['stockCodeList'][i].toString());
+      temp.add(parsedJson['stockCodeList'][i].toString());
     }
     _userModel._stockCodeList = temp;
   }
@@ -58,9 +58,9 @@ class UserModel {
     _userModel._resultUrl = parsedJson['resultUrl'];
     _userModel._didQuiz = parsedJson['didQuiz'];
     List<String> temp = [];
-    for (int i = 0; i < parsedJson['stockList'].length; i++) {
-      print(parsedJson['stockList'][i].toString());
-      temp.add(parsedJson['stockList'][i].toString());
+    for (int i = 0; i < parsedJson['stockCodeList'].length; i++) {
+      print(parsedJson['stockCodeList'][i].toString());
+      temp.add(parsedJson['stockCodeList'][i].toString());
     }
     _userModel._stockCodeList = temp;
     // List<_Stock> temp = [];

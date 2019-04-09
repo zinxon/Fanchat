@@ -724,24 +724,6 @@ class _LoginPageState extends State<LoginPage>
           .where("id", isEqualTo: user.uid)
           .getDocuments();
       final List<DocumentSnapshot> documents = result.documents;
-      var userDoc = documents[0].data;
-      // print("Here is user json: $userDoc");
-      UserModel userModel = UserModel.fromFirebase(userDoc);
-      // UserModel userModel2 = UserModel.instance;
-      for (int i = 0; i < userModel.stockCodeList.length; i++) {
-        var temp = await Firestore.instance
-            .collection("stockCode")
-            .where("stockCode", isEqualTo: userModel.stockCodeList[i])
-            .getDocuments();
-        var tempData = temp.documents[0].data;
-        print(tempData);
-        userModel.setStockList = tempData;
-        // Stock(temp.documents[0].data);
-      }
-
-      // print(identical(userModel, userModel2));
-      // print(userModel.username);
-
       preferences = await SharedPreferences.getInstance();
       if (documents.length == 0) {
         Firestore.instance.collection("users").document(user.uid).setData({
@@ -749,7 +731,7 @@ class _LoginPageState extends State<LoginPage>
           "username": user.displayName,
           "email": user.email,
           "profilePicture": user.photoUrl,
-          "stockList": [],
+          "stockCodeList": [],
           "investorType": "",
           'resultUrl': "",
           "didQuiz": false
@@ -759,11 +741,26 @@ class _LoginPageState extends State<LoginPage>
         await preferences.setString("photoUrl", user.photoUrl);
         await preferences.setBool("isLogged", true);
       } else {
-        await preferences.setString("photoUrl", documents[0]['profilePicture']);
-        await preferences.setString("id", documents[0]['id']);
-        await preferences.setString("username", documents[0]['username']);
-        await preferences.setBool("isLogged", true);
+        var userDoc = documents[0].data;
+        // print("Here is user json: $userDoc");
+        UserModel userModel = UserModel.fromFirebase(userDoc);
+        for (int i = 0; i < userModel.stockCodeList.length; i++) {
+          var temp = await Firestore.instance
+              .collection("stockCode")
+              .where("stockCode", isEqualTo: userModel.stockCodeList[i])
+              .getDocuments();
+          var tempData = temp.documents[0].data;
+          print(tempData);
+          userModel.setStockList = tempData;
+          await preferences.setString(
+              "photoUrl", documents[0]['profilePicture']);
+          await preferences.setString("id", documents[0]['id']);
+          await preferences.setString("username", documents[0]['username']);
+          await preferences.setBool("isLogged", true);
+        }
+        // Stock(temp.documents[0].data);
       }
+
       Fluttertoast.showToast(msg: "Login successful");
     }
   }
@@ -787,7 +784,7 @@ class _LoginPageState extends State<LoginPage>
             "username": user.displayName,
             "email": user.email,
             "profilePicture": user.photoUrl,
-            "stockList": [],
+            "stockCodeList": [],
             "investorType": "",
             'resultUrl': "",
             "didQuiz": false
