@@ -3,18 +3,21 @@ import 'package:flutter/services.dart';
 import 'package:splashscreen/splashscreen.dart';
 
 import 'page/login_page.dart';
+import 'blocs/login_bloc_provider.dart';
 // import 'app_holder.dart';
 // import 'style/theme.dart' show AppColors;
 
 void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'FanChat',
-    theme: ThemeData(
-      primarySwatch: Colors.orange,
-      // platform: TargetPlatform.iOS,
+  runApp(LoginBlocProvider(
+    child: MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'FanChat',
+      theme: ThemeData(
+        primarySwatch: Colors.orange,
+        // platform: TargetPlatform.iOS,
+      ),
+      home: MyApp(),
     ),
-    home: MyApp(),
   ));
 }
 

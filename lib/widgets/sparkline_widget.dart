@@ -48,7 +48,7 @@ class SimpleTimeSeriesChart extends StatelessWidget {
       new TimeSeriesSales(new DateTime(2017, 10, 10), 75),
     ];
 
-    getStockPrice('0700.HK');
+    // getStockPrice('0700.HK');
 
     return [
       new charts.Series<TimeSeriesSales, DateTime>(
