@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage>
                 child: Text(
                   "Existing",
                   style: TextStyle(
-                      color: left,
+                      color: Colors.black,
                       fontSize: 16.0,
                       fontFamily: "WorkSansSemiBold"),
                 ),
@@ -176,7 +176,7 @@ class _LoginPageState extends State<LoginPage>
                 child: Text(
                   "New",
                   style: TextStyle(
-                      color: right,
+                      color: Colors.white,
                       fontSize: 16.0,
                       fontFamily: "WorkSansSemiBold"),
                 ),
@@ -579,16 +579,6 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 
-  void _onSignInButtonPress() {
-    _pageController.animateToPage(0,
-        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
-  }
-
-  void _onSignUpButtonPress() {
-    _pageController?.animateToPage(1,
-        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
-  }
-
   void _toggleLogin() {
     setState(() {
       _obscureTextLogin = !_obscureTextLogin;
@@ -599,6 +589,16 @@ class _LoginPageState extends State<LoginPage>
     setState(() {
       _obscureTextSignup = !_obscureTextSignup;
     });
+  }
+
+  void _onSignInButtonPress() {
+    _pageController.animateToPage(0,
+        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+  }
+
+  void _onSignUpButtonPress() {
+    _pageController?.animateToPage(1,
+        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 
   void _signInWithEmailAndPassword() {

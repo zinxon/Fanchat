@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'firestore_provider.dart';
 import '../models/stockData_model.dart';
 import '../api/stock_api.dart';
-import 'firestore_provider.dart';
 
 class Repository {
   StockDataProvider _apiProvider = StockDataProvider();
