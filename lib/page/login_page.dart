@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage>
                 child: Text(
                   "Existing",
                   style: TextStyle(
-                      color: Colors.black,
+                      color: left,
                       fontSize: 16.0,
                       fontFamily: "WorkSansSemiBold"),
                 ),
@@ -176,7 +176,7 @@ class _LoginPageState extends State<LoginPage>
                 child: Text(
                   "New",
                   style: TextStyle(
-                      color: Colors.white,
+                      color: right,
                       fontSize: 16.0,
                       fontFamily: "WorkSansSemiBold"),
                 ),
@@ -604,11 +604,7 @@ class _LoginPageState extends State<LoginPage>
   void _signInWithEmailAndPassword() {
     _bloc.signInWithEmailAndPassword();
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AppHolder(
-                  title: 'FacChat',
-                )));
+        context, MaterialPageRoute(builder: (context) => AppHolder()));
   }
 
   void _signUp() {
@@ -631,10 +627,6 @@ class _LoginPageState extends State<LoginPage>
   void _signInWithGoogle() {
     _bloc.signInWithGoogle();
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AppHolder(
-                  title: 'FacChat',
-                )));
+        context, MaterialPageRoute(builder: (context) => AppHolder()));
   }
 }

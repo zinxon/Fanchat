@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+
 import 'page/chatbot_page.dart';
 import 'page/user_page.dart';
 import 'page/webview_page.dart';
+import 'blocs/user_bloc_provider.dart';
 
 class AppHolder extends StatefulWidget {
-  AppHolder({Key key, this.title, this.indexGlobal = 0}) : super(key: key);
+  AppHolder({Key key, this.indexGlobal = 0}) : super(key: key);
 
-  final String title;
   int indexGlobal;
 
   @override

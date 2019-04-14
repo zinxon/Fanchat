@@ -15,9 +15,7 @@ import 'webview_page.dart';
 UserModel _userModel = UserModel.instance;
 
 class ChatbotPage extends StatefulWidget {
-  ChatbotPage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  ChatbotPage({Key key}) : super(key: key);
 
   @override
   _ChatbotPageState createState() => _ChatbotPageState();
@@ -140,11 +138,7 @@ class _ChatbotPageState extends State<ChatbotPage>
 
   Future<bool> _requestPop() {
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AppHolder(
-                  title: 'FacChat',
-                )));
+        context, MaterialPageRoute(builder: (context) => AppHolder()));
     return Future.value(false);
   }
 
@@ -164,12 +158,8 @@ class _ChatbotPageState extends State<ChatbotPage>
               icon: Icon(Icons.home),
               color: Colors.white,
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AppHolder(
-                              title: 'FacChat',
-                            )));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AppHolder()));
               },
             ),
           ),

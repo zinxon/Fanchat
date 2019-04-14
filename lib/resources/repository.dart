@@ -1,7 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'firestore_provider.dart';
 import '../models/stockData_model.dart';
+import '../models/user_model.dart';
 import '../api/stock_api.dart';
 
 class Repository {
@@ -20,5 +19,6 @@ class Repository {
   Future<int> signUp(String email, String password) =>
       _firestoreProvider.signUp(email, password);
 
-  Future<DocumentSnapshot> getUserModel() => _firestoreProvider.getUserModel();
+  Future<UserModel> getUserModel(String uid) =>
+      _firestoreProvider.getUserModel(uid);
 }

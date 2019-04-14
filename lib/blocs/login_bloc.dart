@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import '../utils/strings.dart';
 import '../resources/repository.dart';
@@ -54,7 +53,7 @@ class LoginBloc {
         _email.value, _password.value);
   }
 
-  Future<FirebaseUser> signInWithGoogle() {
+  Future<void> signInWithGoogle() {
     return _repository.signInWithGoogle();
   }
 
