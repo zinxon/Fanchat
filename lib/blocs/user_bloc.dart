@@ -13,11 +13,20 @@ class UserBloc {
 
   Future<void> getUserModel() async {
     prefs = await SharedPreferences.getInstance();
+    String uid = prefs.getString('uid');
     print("--------------> In UserBloc");
-    print("--------------> uid: ${prefs.getString('uid')}");
+    print("--------------> uid: $uid");
     UserModel userModel =
         await _repository.getUserModel(prefs.getString('uid'));
     _$userModel.sink.add(userModel);
+  }
+
+  Future<void> addStock(String stockCode) async {
+    prefs = await SharedPreferences.getInstance();
+    String uid = prefs.getString('uid');
+    print("--------------> In UserBloc");
+    print("--------------> uid: $uid");
+    return _repository.addStock(uid, stockCode);
   }
 
   dispose() {

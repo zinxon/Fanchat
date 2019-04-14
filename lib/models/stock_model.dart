@@ -9,7 +9,7 @@ class Stock {
 
   Stock.fromFirebase(Map<dynamic, dynamic> parsedJson) {
     _stockCode = parsedJson['stockCode'];
-    _stockName = parsedJson['name'];
+    _stockName = parsedJson['stockName'];
     _discribe = parsedJson['discribe'];
     _employees = parsedJson['employeese'];
     _industry = parsedJson['industry'];

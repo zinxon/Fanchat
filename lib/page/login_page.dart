@@ -17,7 +17,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
-  LoginBloc _bloc;
+  LoginBloc _loginBloc;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   void didChangeDependencies() {
-    _bloc = LoginBlocProvider.of(context);
+    _loginBloc = LoginBlocProvider.of(context);
     super.didChangeDependencies();
   }
 
@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage>
     myFocusNodePassword.dispose();
     myFocusNodeEmail.dispose();
     _pageController?.dispose();
-    _bloc.dispose();
+    _loginBloc.dispose();
     super.dispose();
   }
 
@@ -216,12 +216,12 @@ class _LoginPageState extends State<LoginPage>
                                 left: 25.0,
                                 right: 25.0),
                             child: StreamBuilder<String>(
-                                stream: _bloc.email,
+                                stream: _loginBloc.email,
                                 builder: (context, snapshot) {
                                   return TextField(
                                     focusNode: myFocusNodeEmailLogin,
                                     textInputAction: TextInputAction.next,
-                                    onChanged: _bloc.changeEmail,
+                                    onChanged: _loginBloc.changeEmail,
                                     onSubmitted: (term) {
                                       myFocusNodeEmailLogin.unfocus();
                                       FocusScope.of(context).requestFocus(
@@ -264,7 +264,7 @@ class _LoginPageState extends State<LoginPage>
                                 onSubmitted: (term) {
                                   myFocusNodePasswordLogin.unfocus();
                                 },
-                                onChanged: _bloc.changePassword,
+                                onChanged: _loginBloc.changePassword,
                                 obscureText: _obscureTextLogin,
                                 style: TextStyle(
                                     fontFamily: "WorkSansSemiBold",
@@ -451,12 +451,12 @@ class _LoginPageState extends State<LoginPage>
                           padding: EdgeInsets.only(
                               top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                           child: StreamBuilder<String>(
-                              stream: _bloc.email,
+                              stream: _loginBloc.email,
                               builder: (context, snapshot) {
                                 return TextField(
                                   focusNode: myFocusNodeEmail,
                                   textInputAction: TextInputAction.next,
-                                  onChanged: _bloc.changeEmail,
+                                  onChanged: _loginBloc.changeEmail,
                                   onSubmitted: (term) {
                                     myFocusNodeEmail.unfocus();
                                     FocusScope.of(context)
@@ -490,12 +490,12 @@ class _LoginPageState extends State<LoginPage>
                           padding: EdgeInsets.only(
                               top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                           child: StreamBuilder<String>(
-                              stream: _bloc.password,
+                              stream: _loginBloc.password,
                               builder: (context, snapshot) {
                                 return TextField(
                                   focusNode: myFocusNodePassword,
                                   textInputAction: TextInputAction.done,
-                                  onChanged: _bloc.changePassword,
+                                  onChanged: _loginBloc.changePassword,
                                   onSubmitted: (term) {
                                     myFocusNodePassword.unfocus();
                                   },
@@ -601,14 +601,8 @@ class _LoginPageState extends State<LoginPage>
         duration: Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 
-  void _signInWithEmailAndPassword() {
-    _bloc.signInWithEmailAndPassword();
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => AppHolder()));
-  }
-
   void _signUp() {
-    _bloc.signUp().then((value) {
+    _loginBloc.signUp().then((value) {
       if (value == 1) {
         Fluttertoast.showToast(
             msg: "Sign Up success",
@@ -624,8 +618,14 @@ class _LoginPageState extends State<LoginPage>
     });
   }
 
+  void _signInWithEmailAndPassword() {
+    _loginBloc.signInWithEmailAndPassword();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => AppHolder()));
+  }
+
   void _signInWithGoogle() {
-    _bloc.signInWithGoogle();
+    _loginBloc.signInWithGoogle();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => AppHolder()));
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../blocs/user_bloc_provider.dart';
 import '../app_holder.dart';
@@ -11,6 +12,8 @@ import '../widgets/list_widget.dart';
 import 'webview_page.dart';
 import 'login_page.dart';
 import 'quiz_page.dart';
+
+SharedPreferences prefs;
 
 class UserPage extends StatefulWidget {
   UserPage();
@@ -27,28 +30,6 @@ class _UserPageState extends State<UserPage> {
     return Future.value(false);
   }
 
-  // Future<void> update() async {
-  //   final QuerySnapshot result = await Firestore.instance
-  //       .collection("users")
-  //       .where("id", isEqualTo: _userModel.id)
-  //       .getDocuments();
-  //   final List<DocumentSnapshot> documents = result.documents;
-  //   var userDoc = documents[0].data;
-  //   print("Here is user json: $userDoc");
-  //   _userModel.updateUser = userDoc;
-  //   for (int i = 0; i < _userModel.stockCodeList.length; i++) {
-  //     var temp = await Firestore.instance
-  //         .collection("stockCode")
-  //         .where("stockCode", isEqualTo: _userModel.stockCodeList[i])
-  //         .getDocuments();
-  //     var tempData = temp.documents[0].data;
-  //     print(tempData);
-  //     _userModel.setStockList = tempData;
-  //     // Stock(temp.documents[0].data);
-  //   }
-  //   print("UserModel is updated");
-  // }
-
   @override
   void didChangeDependencies() {
     _bloc = UserBlocProvider.of(context);
@@ -56,9 +37,9 @@ class _UserPageState extends State<UserPage> {
     super.didChangeDependencies();
   }
 
+  @override
   void initState() {
     super.initState();
-    // update();
   }
 
   @override
@@ -68,200 +49,208 @@ class _UserPageState extends State<UserPage> {
       child: StreamBuilder<UserModel>(
           stream: _bloc.userModel,
           builder: (context, snapshot) {
-            return Scaffold(
-                body: Stack(
-              children: <Widget>[
-                ClipPath(
-                  child: Container(color: Colors.orange),
-                  clipper: getClipper(),
-                ),
-                Positioned(
-                    width: 350.0,
-                    left: 30,
-                    top: MediaQuery.of(context).size.height / 5,
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                            width: 150.0,
-                            height: 150.0,
-                            decoration: BoxDecoration(
-                                color: Colors.red,
-                                image: DecorationImage(
-                                    image:
-                                        // NetworkImage(_userModel.profilePicture),
-                                        NetworkImage(
-                                            snapshot.data.profilePicture),
-                                    fit: BoxFit.cover),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(75.0)),
-                                boxShadow: [
-                                  BoxShadow(
-                                      blurRadius: 7.0, color: Colors.black)
-                                ])),
-                        SizedBox(height: 25.0),
-                        Text(
-                          snapshot.data.username,
-                          style: TextStyle(
-                              fontSize: 30.0,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Montserrat'),
-                        ),
-                        SizedBox(height: 15.0),
-                        Text(
-                          snapshot.data.didQuiz
-                              ? snapshot.data.investorType
-                              : '點擊下方Quiz按鈕進行MBTI測驗',
-                          style: TextStyle(
-                              fontSize: 17.0,
-                              fontStyle: FontStyle.italic,
-                              fontFamily: 'Montserrat'),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Stack(
-                          children: <Widget>[
-                            Scrollbar(
-                                child: Container(
-                              height: 280,
-                              width: MediaQuery.of(context).size.width * 0.85,
-                              child: Column(children: <Widget>[
-                                Flexible(
-                                    child: ListView.builder(
-                                  padding: EdgeInsets.all(8.0),
-                                  itemCount: snapshot.data.stockCodeList.length,
-                                  itemBuilder: (_, int index) {
-                                    return Dismissible(
-                                      key: Key(
-                                          snapshot.data.stockCodeList[index]),
-                                      background: myHiddenContainer(context) ??
-                                          Container(),
-                                      child: InkWell(
-                                        highlightColor: Colors.orange,
-                                        onTap: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  _dialogBuilder(
-                                                      context,
-                                                      snapshot.data
-                                                          .stockList[index]));
-                                        },
-                                        child: myListContainer(
-                                                snapshot.data.stockList[index]
-                                                    .stockName,
-                                                snapshot.data.stockList[index]
-                                                    .stockCode) ??
-                                            Container(),
-                                      ),
-
-                                      // onDismissed: (direction) {
-                                      //   if (direction ==
-                                      //       DismissDirection.startToEnd) {
-                                      //     Fluttertoast.showToast(msg: "Delete");
-                                      //     if (_userModel.stockList.contains(
-                                      //         _userModel.stockList.removeAt(index))) {
-                                      //       setState(() {
-                                      //         _userModel.stockList.remove(_userModel
-                                      //             .stockList
-                                      //             .removeAt(index));
-                                      //       });
-                                      //     }
-                                      //   } else {
-                                      //     if (direction ==
-                                      //         DismissDirection.endToStart) {
-                                      //       Fluttertoast.showToast(msg: "Archive");
-                                      //       // Archive functionality
-                                      //     }
-                                      //   }
-                                      // },
-                                    );
-                                  },
-                                )),
-                                Divider(height: 1.0),
-                              ]),
-                            )),
-                            // SizedBox(height: 25.0),
-                            Container(
-                                margin:
-                                    const EdgeInsets.only(top: 290, left: 20.0),
-                                height: 30.0,
-                                width: 95.0,
-                                child: Material(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    shadowColor: Colors.greenAccent,
-                                    color: Colors.green,
-                                    elevation: 7.0,
-                                    child: snapshot.data.didQuiz
-                                        ? GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        WebViewPage(
-                                                          isBack: true,
-                                                          title: 'Result',
-                                                          url: snapshot
-                                                              .data.resultUrl,
-                                                        )),
-                                              );
-                                            },
-                                            child: Center(
-                                              child: Text(
-                                                'Result',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontFamily: 'Montserrat'),
-                                              ),
-                                            ),
-                                          )
-                                        : GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        QuizPage()),
-                                              );
-                                            },
-                                            child: Center(
-                                              child: Text(
-                                                'Quiz',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontFamily: 'Montserrat'),
-                                              ),
-                                            ),
-                                          ))),
-                            Container(
-                                margin: const EdgeInsets.only(
-                                    top: 290, left: 230.0),
-                                height: 30.0,
-                                width: 95.0,
-                                child: Material(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  shadowColor: Colors.redAccent,
+            if (snapshot.hasData) {
+              return Scaffold(
+                  body: Stack(
+                children: <Widget>[
+                  ClipPath(
+                    child: Container(color: Colors.orange),
+                    clipper: getClipper(),
+                  ),
+                  Positioned(
+                      width: 350.0,
+                      left: 30,
+                      top: MediaQuery.of(context).size.height / 5,
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                              width: 150.0,
+                              height: 150.0,
+                              decoration: BoxDecoration(
                                   color: Colors.red,
-                                  elevation: 7.0,
-                                  child: GestureDetector(
-                                    onTap: _logout,
-                                    child: Center(
-                                      child: Text(
-                                        'Logout',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'Montserrat'),
+                                  image: DecorationImage(
+                                      image:
+                                          // NetworkImage(_userModel.profilePicture),
+                                          NetworkImage(
+                                              snapshot.data.profilePicture),
+                                      fit: BoxFit.cover),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(75.0)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        blurRadius: 7.0, color: Colors.black)
+                                  ])),
+                          SizedBox(height: 25.0),
+                          Text(
+                            snapshot.data.username,
+                            style: TextStyle(
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Montserrat'),
+                          ),
+                          SizedBox(height: 15.0),
+                          Text(
+                            snapshot.data.didQuiz
+                                ? snapshot.data.investorType
+                                : '點擊下方Quiz按鈕進行MBTI測驗',
+                            style: TextStyle(
+                                fontSize: 17.0,
+                                fontStyle: FontStyle.italic,
+                                fontFamily: 'Montserrat'),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Stack(
+                            children: <Widget>[
+                              Scrollbar(
+                                  child: Container(
+                                height: 280,
+                                width: MediaQuery.of(context).size.width * 0.85,
+                                child: Column(children: <Widget>[
+                                  Flexible(
+                                      child: ListView.builder(
+                                    padding: EdgeInsets.all(8.0),
+                                    itemCount: snapshot.data.stockList.length,
+                                    itemBuilder: (_, int index) {
+                                      return Dismissible(
+                                        key: Key(snapshot
+                                            .data.stockList[index].stockCode),
+                                        background:
+                                            myHiddenContainer(context) ??
+                                                Container(),
+                                        child: InkWell(
+                                          highlightColor: Colors.orange,
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    _dialogBuilder(
+                                                        context,
+                                                        snapshot.data
+                                                            .stockList[index]));
+                                          },
+                                          child: myListContainer(
+                                                  snapshot.data.stockList[index]
+                                                      .stockName,
+                                                  snapshot.data.stockList[index]
+                                                      .stockCode) ??
+                                              Container(),
+                                        ),
+
+                                        // onDismissed: (direction) {
+                                        //   if (direction ==
+                                        //       DismissDirection.startToEnd) {
+                                        //     Fluttertoast.showToast(msg: "Delete");
+                                        //     if (_userModel.stockList.contains(
+                                        //         _userModel.stockList.removeAt(index))) {
+                                        //       setState(() {
+                                        //         _userModel.stockList.remove(_userModel
+                                        //             .stockList
+                                        //             .removeAt(index));
+                                        //       });
+                                        //     }
+                                        //   } else {
+                                        //     if (direction ==
+                                        //         DismissDirection.endToStart) {
+                                        //       Fluttertoast.showToast(msg: "Archive");
+                                        //       // Archive functionality
+                                        //     }
+                                        //   }
+                                        // },
+                                      );
+                                    },
+                                  )),
+                                  Divider(height: 1.0),
+                                ]),
+                              )),
+                              // SizedBox(height: 25.0),
+                              Container(
+                                  margin: const EdgeInsets.only(
+                                      top: 290, left: 20.0),
+                                  height: 30.0,
+                                  width: 95.0,
+                                  child: Material(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      shadowColor: Colors.greenAccent,
+                                      color: Colors.green,
+                                      elevation: 7.0,
+                                      child: snapshot.data.didQuiz
+                                          ? GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WebViewPage(
+                                                            isBack: true,
+                                                            title: 'Result',
+                                                            url: snapshot
+                                                                .data.resultUrl,
+                                                          )),
+                                                );
+                                              },
+                                              child: Center(
+                                                child: Text(
+                                                  'Result',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontFamily: 'Montserrat'),
+                                                ),
+                                              ),
+                                            )
+                                          : GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          QuizPage()),
+                                                );
+                                              },
+                                              child: Center(
+                                                child: Text(
+                                                  'Quiz',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontFamily: 'Montserrat'),
+                                                ),
+                                              ),
+                                            ))),
+                              Container(
+                                  margin: const EdgeInsets.only(
+                                      top: 290, left: 230.0),
+                                  height: 30.0,
+                                  width: 95.0,
+                                  child: Material(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    shadowColor: Colors.redAccent,
+                                    color: Colors.red,
+                                    elevation: 7.0,
+                                    child: GestureDetector(
+                                      onTap: _logout,
+                                      child: Center(
+                                        child: Text(
+                                          'Logout',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'Montserrat'),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ))
-                          ],
-                        )
-                      ],
-                    ))
-              ],
-            ));
+                                  ))
+                            ],
+                          )
+                        ],
+                      ))
+                ],
+              ));
+            }
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
           }),
     );
   }
@@ -274,6 +263,8 @@ class _UserPageState extends State<UserPage> {
   }
 
   Future<Null> _logout() async {
+    prefs = await SharedPreferences.getInstance();
+    prefs.clear();
     FirebaseAuth.instance.signOut().then((val) {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => LoginPage()));

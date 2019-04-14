@@ -10,9 +10,11 @@ import '../style/theme.dart' show AppColors, TextStyles;
 import '../models/user_model.dart';
 import '../models/stock_model.dart';
 import '../widgets/card_widget.dart';
+import '../blocs/user_bloc_provider.dart';
 import 'webview_page.dart';
 
 UserModel _userModel = UserModel.instance;
+UserBloc _userBloc;
 
 class ChatbotPage extends StatefulWidget {
   ChatbotPage({Key key}) : super(key: key);
@@ -32,6 +34,12 @@ class _ChatbotPageState extends State<ChatbotPage>
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void didChangeDependencies() {
+    _userBloc = UserBlocProvider.of(context);
+    super.didChangeDependencies();
+  }
 
   @override
   initState() {
@@ -188,21 +196,9 @@ class _ChatbotPageState extends State<ChatbotPage>
     if (msgS.contains("-")) {
       String stockCode = msgS.split("-")[1].substring(1);
       print("addStock: " + stockCode);
-      List stockCodeList = [stockCode];
       try {
         if (_userModel != null) {
-          // final QuerySnapshot result = await Firestore.instance
-          //     .collection("users")
-          //     .where("id", isEqualTo: _userModel.id)
-          //     .getDocuments();
-          // final List<DocumentSnapshot> documents = result.documents;
-          Firestore.instance
-              .collection("users")
-              .document(_userModel.id)
-              .updateData({
-            "stockCodeList": FieldValue.arrayUnion(stockCodeList),
-          });
-
+          _userBloc.addStock(stockCode);
           Fluttertoast.showToast(
               msg: "${stockCode} 已關注",
               toastLength: Toast.LENGTH_SHORT,
@@ -255,8 +251,6 @@ class ChatMessage extends StatelessWidget {
             isGetInfo
                 ? cardWidget(context, stock, true)
                 : Container(
-                    // margin: const EdgeInsets.only(top: 10.0),
-                    // child: Text(text),
                     child: GestureDetector(
                       child: CustomToolTip(
                         text: text,
@@ -295,8 +289,6 @@ class ChatMessage extends StatelessWidget {
       ),
       Container(
         margin: const EdgeInsets.only(left: 16.0),
-        // child:   CircleAvatar(child:   Text(this.name[0])),
-        // child:   CircleAvatar(child: Image.network(_photoUrl)),
         child: Container(
             width: 50.0,
             height: 50.0,
@@ -307,7 +299,7 @@ class ChatMessage extends StatelessWidget {
                     fit: BoxFit.cover),
                 borderRadius: BorderRadius.all(Radius.circular(75.0)),
                 boxShadow: [BoxShadow(blurRadius: 7.0, color: Colors.black)])),
-      ),
+      )
     ];
   }
 
@@ -330,9 +322,6 @@ class CustomToolTip extends StatelessWidget {
   CustomToolTip({this.text});
 
   bool checkUrl() {
-    // print('In checkUrl: ' + text);
-    // print(Uri.http("$text", ""));
-    // Uri.parse(text);
     if (text.contains("https")) {
       textUrl = text.split(" ")[0];
       return true;
@@ -369,11 +358,7 @@ class CustomToolTip extends StatelessWidget {
         ),
       ),
       onTap: () {
-        // String textUrl = text.split(" ")[0];
-        // print("textUrl:" + textUrl);
-        // print(checkUrl());
         if (checkUrl()) {
-          // print("hihi");
           // Clipboard.setData(ClipboardData(text: text));
           Fluttertoast.showToast(
               msg: "GO",
@@ -393,8 +378,6 @@ class CustomToolTip extends StatelessWidget {
                     )),
           );
         }
-
-        // flutterTts.speak(text);
       },
     );
   }

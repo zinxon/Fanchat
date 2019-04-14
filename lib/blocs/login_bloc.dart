@@ -39,11 +39,6 @@ class LoginBloc {
     }
   });
 
-  Future<int> submit() {
-    return _repository.signInWithEmailAndPassword(
-        _email.value, _password.value);
-  }
-
   Future<int> signUp() {
     return _repository.signUp(_email.value, _password.value);
   }
