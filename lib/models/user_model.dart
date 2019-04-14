@@ -57,12 +57,13 @@ class UserModel {
     _userModel._investorType = parsedJson['investorType'];
     _userModel._resultUrl = parsedJson['resultUrl'];
     _userModel._didQuiz = parsedJson['didQuiz'];
-    List<String> temp = [];
-    for (int i = 0; i < parsedJson['stockCodeList'].length; i++) {
-      print(parsedJson['stockCodeList'][i].toString());
-      temp.add(parsedJson['stockCodeList'][i].toString());
+    List<Stock> temp = [];
+    for (int i = 0; i < parsedJson['stockList'].length; i++) {
+      Stock stock = Stock.fromFirebase(parsedJson['stockList'][i]);
+      // print(parsedJson['stockList'][i].toString());
+      temp.add(stock);
     }
-    _userModel._stockCodeList = temp;
+    _userModel._stockList = temp;
     // List<_Stock> temp = [];
     // for (int i = 0; i < parsedJson['stocklist'].length; i++) {
     //   _Stock stock = _Stock(parsedJson['stocklist'][i]);

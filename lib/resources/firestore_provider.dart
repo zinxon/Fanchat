@@ -144,23 +144,12 @@ class FirestoreProvider {
     var userDoc = documents[0].data;
     // print("Here is user json: $userDoc");
     UserModel userModel = UserModel.fromFirebase(userDoc);
-    // for (int i = 0; i < userModel.stockCodeList.length; i++) {
-    //   var temp = await Firestore.instance
-    //       .collection("stockCode")
-    //       .where("stockCode", isEqualTo: userModel.stockCodeList[i])
-    //       .getDocuments();
-    //   var tempData = temp.documents[0].data;
-    //   print(tempData);
+    // userModel.stockList.clear();
+    // for (int i = 0; i < userDoc['stockList'].length; i++) {
+    //   var tempData = userDoc['stockList'][i];
     //   userModel.setStockList = tempData;
     // }
-    // print('${userDoc['stockList'].toString()}');
-    userModel.stockList.clear();
-    for (int i = 0; i < userDoc['stockList'].length; i++) {
-      var tempData = userDoc['stockList'][i];
-      // print(tempData);
-      userModel.setStockList = tempData;
-    }
-    print(userModel.stockList);
+    // print(userModel.stockList);
     return userModel;
   }
 
