@@ -13,23 +13,23 @@ Widget myHiddenContainer(BuildContext context) {
         Align(
           alignment: Alignment.centerLeft,
           child: IconButton(
-              icon: Icon(FontAwesomeIcons.solidTrashAlt),
-              color: Colors.white,
-              onPressed: () {}),
+            icon: Icon(FontAwesomeIcons.solidTrashAlt),
+            color: Colors.white,
+          ),
         ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: IconButton(
-              icon: Icon(FontAwesomeIcons.archive),
-              color: Colors.white,
-              onPressed: () {}),
-        ),
+        // Align(
+        //   alignment: Alignment.centerRight,
+        //   child: IconButton(
+        //       icon: Icon(FontAwesomeIcons.archive),
+        //       color: Colors.white,
+        //       onPressed: () {}),
+        // ),
       ],
     ),
   );
 }
 
-Widget myListContainer(String taskname, String subtask) {
+Widget myListContainer(String stockName, String stockCode) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Container(
@@ -57,14 +57,14 @@ Widget myListContainer(String taskname, String subtask) {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          Text(taskname,
+                          Text(stockName,
                               style: TextStyle(
                                   fontSize: 24.0,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold)),
                           Container(
                             margin: EdgeInsets.only(left: 50),
-                            child: Text('($subtask)',
+                            child: Text('($stockCode)',
                                 style: TextStyle(
                                     fontSize: 18.0, color: Colors.blueAccent)),
                           )

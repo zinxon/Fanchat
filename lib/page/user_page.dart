@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../blocs/user_bloc_provider.dart';
 import '../app_holder.dart';
@@ -137,27 +138,36 @@ class _UserPageState extends State<UserPage> {
                                                       .stockCode) ??
                                               Container(),
                                         ),
-
-                                        // onDismissed: (direction) {
-                                        //   if (direction ==
-                                        //       DismissDirection.startToEnd) {
-                                        //     Fluttertoast.showToast(msg: "Delete");
-                                        //     if (_userModel.stockList.contains(
-                                        //         _userModel.stockList.removeAt(index))) {
-                                        //       setState(() {
-                                        //         _userModel.stockList.remove(_userModel
-                                        //             .stockList
-                                        //             .removeAt(index));
-                                        //       });
-                                        //     }
-                                        //   } else {
-                                        //     if (direction ==
-                                        //         DismissDirection.endToStart) {
-                                        //       Fluttertoast.showToast(msg: "Archive");
-                                        //       // Archive functionality
-                                        //     }
-                                        //   }
-                                        // },
+                                        onDismissed: (direction) {
+                                          if (direction ==
+                                              DismissDirection.startToEnd) {
+                                            List<Stock> _modifiedStockList =
+                                                snapshot.data.stockList;
+                                            List<Map> _modifiedStockListMap =
+                                                List();
+                                            _modifiedStockList.removeAt(index);
+                                            for (var item
+                                                in _modifiedStockList) {
+                                              _modifiedStockListMap
+                                                  .add(item.toMap());
+                                            }
+                                            print('--------------------->' +
+                                                _modifiedStockListMap
+                                                    .toString());
+                                            Firestore.instance
+                                                .collection("users")
+                                                .document("${snapshot.data.id}")
+                                                .updateData({
+                                              "stockList":
+                                                  _modifiedStockListMap,
+                                            }).then((value) {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                      "${snapshot.data.stockList[index].stockName} is deleted");
+                                              _bloc.getUserModel();
+                                            });
+                                          }
+                                        },
                                       );
                                     },
                                   )),

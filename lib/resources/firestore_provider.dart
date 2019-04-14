@@ -29,7 +29,8 @@ class FirestoreProvider {
     assert(user.uid == currentUser.uid);
     prefs = await SharedPreferences.getInstance();
     prefs.setString("uid", user.uid);
-    print('-------------------> uid: ${prefs.getString('uid')}');
+    String uid = prefs.getString('uid');
+    print('-------------------> uid: $uid}');
     if (user != null) {
       final QuerySnapshot result = await Firestore.instance
           .collection("users")
@@ -42,13 +43,13 @@ class FirestoreProvider {
           "username": user.displayName,
           "email": user.email,
           "profilePicture": user.photoUrl,
-          "stockCodeList": [],
           "stockList": [],
           "investorType": "",
           'resultUrl': "",
           "didQuiz": false
         });
       }
+      getUserModel(uid);
     }
     Fluttertoast.showToast(
         msg: "Welcome, ${user.displayName}!",
@@ -74,7 +75,9 @@ class FirestoreProvider {
       if (user != null) {
         prefs = await SharedPreferences.getInstance();
         prefs.setString("uid", user.uid);
-        print('-------------------> uid: ${prefs.getString('uid')}');
+        String uid = prefs.getString('uid');
+        print('-------------------> uid: $uid');
+        getUserModel(uid);
         Fluttertoast.showToast(
             msg: "Welcome, ${user.displayName}!",
             toastLength: Toast.LENGTH_SHORT,
@@ -106,7 +109,6 @@ class FirestoreProvider {
             "username": user.displayName,
             "email": user.email,
             "profilePicture": user.photoUrl,
-            "stockCodeList": [],
             "stockList": [],
             "investorType": "",
             'resultUrl': "",
@@ -140,16 +142,8 @@ class FirestoreProvider {
         .where("id", isEqualTo: uid)
         .getDocuments();
     final List<DocumentSnapshot> documents = result.documents;
-    // print(documents);
     var userDoc = documents[0].data;
-    // print("Here is user json: $userDoc");
     UserModel userModel = UserModel.fromFirebase(userDoc);
-    // userModel.stockList.clear();
-    // for (int i = 0; i < userDoc['stockList'].length; i++) {
-    //   var tempData = userDoc['stockList'][i];
-    //   userModel.setStockList = tempData;
-    // }
-    // print(userModel.stockList);
     return userModel;
   }
 
@@ -174,5 +168,18 @@ class FirestoreProvider {
     Firestore.instance.collection("users").document(uid).updateData({
       "stockList": FieldValue.arrayUnion(stock),
     });
+  }
+
+  delStock(String index) async {
+    prefs = await SharedPreferences.getInstance();
+    String uid = prefs.getString('uid');
+    Firestore.instance
+        .collection("users")
+        .document('$uid/stockList/$index')
+        .delete();
+
+    //  Firestore.instance.child("todo")
+    // .orderByChild("userId")
+    // .equalTo(widget.userId)
   }
 }
