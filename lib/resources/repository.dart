@@ -24,4 +24,7 @@ class Repository {
 
   Future<void> addStock(String uid, String stockCode) =>
       _firestoreProvider.addStock(uid, stockCode);
+
+  Future<void> delStock(UserModel userModel, int index) =>
+      _firestoreProvider.delStock(userModel, index);
 }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user_model.dart';
+import '../models/stock_model.dart';
 
 class FirestoreProvider {
   SharedPreferences prefs;
@@ -30,7 +31,7 @@ class FirestoreProvider {
     prefs = await SharedPreferences.getInstance();
     prefs.setString("uid", user.uid);
     String uid = prefs.getString('uid');
-    print('-------------------> uid: $uid}');
+    // print('-------------------> uid: $uid}');
     if (user != null) {
       final QuerySnapshot result = await Firestore.instance
           .collection("users")
@@ -71,12 +72,11 @@ class FirestoreProvider {
       assert(await user.getIdToken() != null);
       final FirebaseUser currentUser = await _auth.currentUser();
       assert(user.uid == currentUser.uid);
-      print("create user");
       if (user != null) {
         prefs = await SharedPreferences.getInstance();
         prefs.setString("uid", user.uid);
         String uid = prefs.getString('uid');
-        print('-------------------> uid: $uid');
+        // print('-------------------> uid: $uid');
         getUserModel(uid);
         Fluttertoast.showToast(
             msg: "Welcome, ${user.displayName}!",
@@ -136,7 +136,7 @@ class FirestoreProvider {
   }
 
   Future<UserModel> getUserModel(String uid) async {
-    print("------------> In getUserModel: $uid");
+    // print("------------> In getUserModel: $uid");
     final QuerySnapshot result = await Firestore.instance
         .collection("users")
         .where("id", isEqualTo: uid)
@@ -170,16 +170,24 @@ class FirestoreProvider {
     });
   }
 
-  delStock(String index) async {
+  Future delStock(UserModel userModel, int index) async {
     prefs = await SharedPreferences.getInstance();
     String uid = prefs.getString('uid');
+    List<Stock> _modifiedStockList = userModel.stockList;
+    List<Map> _modifiedStockListMap = List();
+    Stock delStock = _modifiedStockList.removeAt(index);
+    for (var item in _modifiedStockList) {
+      _modifiedStockListMap.add(item.toMap());
+    }
+    print('--------------------->' + _modifiedStockListMap.toString());
     Firestore.instance
         .collection("users")
-        .document('$uid/stockList/$index')
-        .delete();
-
-    //  Firestore.instance.child("todo")
-    // .orderByChild("userId")
-    // .equalTo(widget.userId)
+        .document("${userModel.id}")
+        .updateData({
+      "stockList": _modifiedStockListMap,
+    }).whenComplete(() {
+      Fluttertoast.showToast(msg: "已取消關注${delStock.stockName} ");
+      getUserModel(uid);
+    });
   }
 }

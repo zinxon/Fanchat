@@ -15,15 +15,9 @@ Widget myHiddenContainer(BuildContext context) {
           child: IconButton(
             icon: Icon(FontAwesomeIcons.solidTrashAlt),
             color: Colors.white,
+            onPressed: () {},
           ),
         ),
-        // Align(
-        //   alignment: Alignment.centerRight,
-        //   child: IconButton(
-        //       icon: Icon(FontAwesomeIcons.archive),
-        //       color: Colors.white,
-        //       onPressed: () {}),
-        // ),
       ],
     ),
   );

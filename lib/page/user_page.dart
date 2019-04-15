@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../blocs/user_bloc_provider.dart';
 import '../app_holder.dart';
@@ -23,7 +22,9 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  UserBloc _bloc;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+  UserBloc _userBloc;
 
   Future<bool> _requestPop() {
     Navigator.pushReplacement(
@@ -33,8 +34,8 @@ class _UserPageState extends State<UserPage> {
 
   @override
   void didChangeDependencies() {
-    _bloc = UserBlocProvider.of(context);
-    _bloc.getUserModel();
+    _userBloc = UserBlocProvider.of(context);
+    _userBloc.getUserModel();
     super.didChangeDependencies();
   }
 
@@ -48,7 +49,7 @@ class _UserPageState extends State<UserPage> {
     return WillPopScope(
       onWillPop: _requestPop,
       child: StreamBuilder<UserModel>(
-          stream: _bloc.userModel,
+          stream: _userBloc.userModel,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Scaffold(
@@ -70,10 +71,8 @@ class _UserPageState extends State<UserPage> {
                               decoration: BoxDecoration(
                                   color: Colors.red,
                                   image: DecorationImage(
-                                      image:
-                                          // NetworkImage(_userModel.profilePicture),
-                                          NetworkImage(
-                                              snapshot.data.profilePicture),
+                                      image: NetworkImage(
+                                          snapshot.data.profilePicture),
                                       fit: BoxFit.cover),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(75.0)),
@@ -123,6 +122,7 @@ class _UserPageState extends State<UserPage> {
                                         child: InkWell(
                                           highlightColor: Colors.orange,
                                           onTap: () {
+                                            print('index: $index');
                                             showDialog(
                                                 context: context,
                                                 builder: (context) =>
@@ -139,34 +139,9 @@ class _UserPageState extends State<UserPage> {
                                               Container(),
                                         ),
                                         onDismissed: (direction) {
-                                          if (direction ==
-                                              DismissDirection.startToEnd) {
-                                            List<Stock> _modifiedStockList =
-                                                snapshot.data.stockList;
-                                            List<Map> _modifiedStockListMap =
-                                                List();
-                                            _modifiedStockList.removeAt(index);
-                                            for (var item
-                                                in _modifiedStockList) {
-                                              _modifiedStockListMap
-                                                  .add(item.toMap());
-                                            }
-                                            print('--------------------->' +
-                                                _modifiedStockListMap
-                                                    .toString());
-                                            Firestore.instance
-                                                .collection("users")
-                                                .document("${snapshot.data.id}")
-                                                .updateData({
-                                              "stockList":
-                                                  _modifiedStockListMap,
-                                            }).then((value) {
-                                              Fluttertoast.showToast(
-                                                  msg:
-                                                      "${snapshot.data.stockList[index].stockName} is deleted");
-                                              _bloc.getUserModel();
-                                            });
-                                          }
+                                          _userBloc.delStock(
+                                              snapshot.data, index);
+                                          setState(() {});
                                         },
                                       );
                                     },
