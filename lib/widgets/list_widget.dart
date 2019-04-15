@@ -25,7 +25,8 @@ Widget myHiddenContainer(BuildContext context) {
   );
 }
 
-Widget myListContainer(String stockName, String stockCode) {
+Widget myListContainer(
+    String stockName, String stockCode, List<TimeSeriesSale> timeSeries) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Container(
@@ -68,7 +69,8 @@ Widget myListContainer(String stockName, String stockCode) {
                       ),
                       Container(
                         height: 80,
-                        child: SimpleTimeSeriesChart.withSampleData(),
+                        // child: SimpleTimeSeriesChart.withSampleData(),
+                        child: TimeSeriesChart(timeSeries, false),
                       ),
                     ],
                   ),

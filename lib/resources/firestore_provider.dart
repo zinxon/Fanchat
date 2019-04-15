@@ -7,8 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user_model.dart';
 import '../models/stock_model.dart';
+import '../models/stockData_model.dart';
+import '../api/stock_api.dart';
 
 class FirestoreProvider {
+  StockDataProvider _apiProvider = StockDataProvider();
   SharedPreferences prefs;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -50,7 +53,7 @@ class FirestoreProvider {
           "didQuiz": false
         });
       }
-      getUserModel(uid);
+      // getUserModel(uid);
     }
     Fluttertoast.showToast(
         msg: "Welcome, ${user.displayName}!",
@@ -77,7 +80,7 @@ class FirestoreProvider {
         prefs.setString("uid", user.uid);
         String uid = prefs.getString('uid');
         // print('-------------------> uid: $uid');
-        getUserModel(uid);
+        // getUserModel(uid);
         Fluttertoast.showToast(
             msg: "Welcome, ${user.displayName}!",
             toastLength: Toast.LENGTH_SHORT,
@@ -144,6 +147,10 @@ class FirestoreProvider {
     final List<DocumentSnapshot> documents = result.documents;
     var userDoc = documents[0].data;
     UserModel userModel = UserModel.fromFirebase(userDoc);
+    for (var item in userModel.stockList) {
+      StockData stockData = await _apiProvider.getStockData(item.stockCode);
+      item.setStockData = stockData;
+    }
     return userModel;
   }
 

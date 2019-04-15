@@ -137,11 +137,12 @@ class _UserPageState extends State<UserPage> {
                                                             .stockList[index]));
                                           },
                                           child: myListContainer(
-                                                snapshot.data.stockList[index]
-                                                    .stockName,
-                                                snapshot.data.stockList[index]
-                                                    .stockCode,
-                                              ) ??
+                                                  snapshot.data.stockList[index]
+                                                      .stockName,
+                                                  snapshot.data.stockList[index]
+                                                      .stockCode,
+                                                  snapshot.data.stockList[index]
+                                                      .stockData.stockData) ??
                                               Container(),
                                         ),
                                         onDismissed: (direction) {

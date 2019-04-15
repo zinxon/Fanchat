@@ -1,3 +1,5 @@
+import 'stockData_model.dart';
+
 class Stock {
   String _stockCode;
   String _stockName;
@@ -6,6 +8,7 @@ class Stock {
   String _industry;
   String _sector;
   String _website;
+  StockData _stockData;
 
   Stock.fromFirebase(Map<dynamic, dynamic> parsedJson) {
     _stockCode = parsedJson['stockCode'];
@@ -15,6 +18,10 @@ class Stock {
     _industry = parsedJson['industry'];
     _sector = parsedJson['sector'];
     _website = parsedJson['website'];
+  }
+
+  set setStockData(StockData stockData) {
+    _stockData = stockData;
   }
 
   Map<String, dynamic> toMap() {
@@ -36,4 +43,5 @@ class Stock {
   String get industry => _industry;
   String get sector => _sector;
   String get website => _website;
+  StockData get stockData => _stockData;
 }

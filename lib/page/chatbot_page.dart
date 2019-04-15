@@ -37,6 +37,7 @@ class _ChatbotPageState extends State<ChatbotPage>
   @override
   void didChangeDependencies() {
     _userBloc = UserBlocProvider.of(context);
+    _userBloc.getUserModel();
     super.didChangeDependencies();
   }
 

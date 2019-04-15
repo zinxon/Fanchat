@@ -6,10 +6,10 @@ class StockDataList {
 }
 
 class StockData {
-  List<TimeSeriesSale> _stockdata = [];
-  StockData(this._stockdata);
+  List<TimeSeriesSale> _stockData = [];
+  StockData(this._stockData);
 
-  List<TimeSeriesSale> get stockdata => _stockdata;
+  List<TimeSeriesSale> get stockData => _stockData;
 }
 
 class TimeSeriesSale {
