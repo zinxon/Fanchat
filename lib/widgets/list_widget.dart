@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../widgets/sparkline_widget.dart';
+import '../models/stockData_model.dart';
+import '../resources/repository.dart';
 
 Widget myHiddenContainer(BuildContext context) {
   return Container(

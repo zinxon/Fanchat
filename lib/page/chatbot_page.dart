@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../app_holder.dart';
-import '../api/yahoo_finance.dart';
 import '../style/theme.dart' show AppColors, TextStyles;
 import '../models/user_model.dart';
 import '../models/stock_model.dart';
@@ -104,7 +103,7 @@ class _ChatbotPageState extends State<ChatbotPage>
       var tempData = temp.documents[0].data;
       print(tempData);
       stock = Stock.fromFirebase(tempData);
-      print(stock.website);
+      // print(stock.website);
       isGetInfo = true;
     }
     ChatMessage message = ChatMessage(
@@ -118,13 +117,6 @@ class _ChatbotPageState extends State<ChatbotPage>
     if (response.queryResult.action == "add_stock") {
       print("action: " + response.queryResult.action);
       addStock(response);
-    } else if (response.queryResult.action == "get_stock_new") {
-      List msg = response.getListMessage();
-      String msgS = (msg[0]['text']['text'][0]).toString();
-      if (msgS.contains("-")) {
-        String stockCode = msgS.split("-")[0];
-        getStockNew(stockCode);
-      }
     }
     setState(() {
       _messages.insert(0, message);

@@ -1,16 +1,20 @@
+class StockDataList {
+  List<StockData> _stockDataList = [];
+  StockDataList(this._stockDataList);
+
+  List<StockData> get stockDataList => _stockDataList;
+}
+
 class StockData {
-  String interval;
-  String symbol;
-  String timeSeries_1min;
-  StockData(this.interval, this.symbol, this.timeSeries_1min);
+  List<TimeSeriesSale> _stockdata = [];
+  StockData(this._stockdata);
 
-  StockData.fromJson(Map<String, dynamic> json)
-      : symbol = json["Meta Data"]['2. Symbol'],
-        interval = json["Meta Data"]['4. Interval'],
-        timeSeries_1min = json["Time Series (1min)"];
+  List<TimeSeriesSale> get stockdata => _stockdata;
+}
 
-  // factory StockData.fromJson(Map<String, dynamic> json) =>
-  //     _$StockDataFromJson(json);
+class TimeSeriesSale {
+  final DateTime time;
+  final double sales;
 
-  // Map<String, dynamic> toJson() => _$StockDataToJson(this);
+  TimeSeriesSale(this.time, this.sales);
 }

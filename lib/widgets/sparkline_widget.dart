@@ -1,7 +1,47 @@
 /// Timeseries chart example
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+
+import '../models/stockData_model.dart';
+
+class TimeSeriesChart extends StatefulWidget {
+  List<TimeSeriesSale> timeSeries;
+  bool animate;
+
+  TimeSeriesChart(this.timeSeries, this.animate);
+
+  @override
+  _TimeSeriesChartState createState() =>
+      _TimeSeriesChartState(this.timeSeries, this.animate);
+}
+
+class _TimeSeriesChartState extends State<TimeSeriesChart> {
+  List<TimeSeriesSale> timeSeries;
+  bool animate;
+
+  _TimeSeriesChartState(this.timeSeries, this.animate);
+
+  List<charts.Series<TimeSeriesSale, DateTime>> _createStockData() {
+    return [
+      new charts.Series<TimeSeriesSale, DateTime>(
+        id: 'Sales',
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (TimeSeriesSale sales, _) => sales.time,
+        measureFn: (TimeSeriesSale sales, _) => sales.sales,
+        data: timeSeries,
+      )
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new charts.TimeSeriesChart(
+      _createStockData(),
+      animate: animate,
+      dateTimeFactory: const charts.LocalDateTimeFactory(),
+    );
+  }
+}
 
 class SimpleTimeSeriesChart extends StatelessWidget {
   final List<charts.Series> seriesList;
@@ -16,15 +56,6 @@ class SimpleTimeSeriesChart extends StatelessWidget {
       // Disable animations for image tests.
       animate: false,
     );
-  }
-  static void getStockPrice(String stockCode) async {
-    var dio = Dio();
-    String api = "TIR873DLX4ZC9WTV";
-    String url =
-        "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&outputsize=compact&symbol=$stockCode&interval=1min&apikey=$api";
-    print(url);
-    Response response = await dio.get(url);
-    print(response.data);
   }
 
   @override
@@ -44,7 +75,7 @@ class SimpleTimeSeriesChart extends StatelessWidget {
     final data = [
       new TimeSeriesSales(new DateTime(2017, 9, 19), 5),
       new TimeSeriesSales(new DateTime(2017, 9, 26), 25),
-      new TimeSeriesSales(new DateTime(2017, 10, 3), 100),
+      new TimeSeriesSales(new DateTime(2017, 10, 3), 100.5),
       new TimeSeriesSales(new DateTime(2017, 10, 10), 75),
     ];
 
@@ -62,10 +93,10 @@ class SimpleTimeSeriesChart extends StatelessWidget {
   }
 }
 
-/// Sample time series data type.
+// Sample time series data type.
 class TimeSeriesSales {
   final DateTime time;
-  final int sales;
+  final double sales;
 
   TimeSeriesSales(this.time, this.sales);
 }

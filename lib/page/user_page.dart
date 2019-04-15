@@ -9,6 +9,7 @@ import '../models/user_model.dart';
 import '../models/stock_model.dart';
 import '../widgets/card_widget.dart';
 import '../widgets/list_widget.dart';
+import '../api/stock_api.dart';
 import 'webview_page.dart';
 import 'login_page.dart';
 import 'quiz_page.dart';
@@ -22,8 +23,6 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      new GlobalKey<RefreshIndicatorState>();
   UserBloc _userBloc;
 
   Future<bool> _requestPop() {
@@ -114,6 +113,10 @@ class _UserPageState extends State<UserPage> {
                                     itemCount: snapshot.data.stockList.length,
                                     itemBuilder: (_, int index) {
                                       return Dismissible(
+                                        onResize: () async {
+                                          await _userBloc.getStockData(snapshot
+                                              .data.stockList[index].stockCode);
+                                        },
                                         key: Key(snapshot
                                             .data.stockList[index].stockCode),
                                         background:
@@ -122,6 +125,8 @@ class _UserPageState extends State<UserPage> {
                                         child: InkWell(
                                           highlightColor: Colors.orange,
                                           onTap: () {
+                                            // _userBloc.getStockData(snapshot.data
+                                            //     .stockList[index].stockCode);
                                             print('index: $index');
                                             showDialog(
                                                 context: context,
@@ -132,10 +137,11 @@ class _UserPageState extends State<UserPage> {
                                                             .stockList[index]));
                                           },
                                           child: myListContainer(
-                                                  snapshot.data.stockList[index]
-                                                      .stockName,
-                                                  snapshot.data.stockList[index]
-                                                      .stockCode) ??
+                                                snapshot.data.stockList[index]
+                                                    .stockName,
+                                                snapshot.data.stockList[index]
+                                                    .stockCode,
+                                              ) ??
                                               Container(),
                                         ),
                                         onDismissed: (direction) {

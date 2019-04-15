@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../resources/repository.dart';
 import '../models/user_model.dart';
+import '../models/stockData_model.dart';
 
 class UserBloc {
   SharedPreferences prefs;
@@ -18,6 +19,10 @@ class UserBloc {
     _$userModel.sink.add(userModel);
   }
 
+  Future<StockData> getStockData(String stockCode) async {
+    return await _repository.getStockData(stockCode);
+  }
+
   Future<void> addStock(String stockCode) async {
     prefs = await SharedPreferences.getInstance();
     String uid = prefs.getString('uid');
@@ -28,7 +33,8 @@ class UserBloc {
     return _repository.delStock(userModel, index);
   }
 
-  dispose() {
+  void dispose() async {
+    await _$userModel.drain();
     _$userModel.close();
   }
 
