@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../widgets/sparkline_widget.dart';
 import '../models/stockData_model.dart';
-import '../resources/repository.dart';
 
 Widget myHiddenContainer(BuildContext context) {
   return Container(
@@ -30,7 +29,7 @@ Widget myListContainer(
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Container(
-      height: 140.0,
+      height: 180.0,
       child: Material(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -48,7 +47,8 @@ Widget myListContainer(
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  // padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(top: 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
@@ -68,9 +68,10 @@ Widget myListContainer(
                         ],
                       ),
                       Container(
-                        height: 80,
+                        // height: 80,
+                        height: 120,
                         // child: SimpleTimeSeriesChart.withSampleData(),
-                        child: TimeSeriesChart(timeSeries, false),
+                        child: TimeSeriesChart(timeSeries, true),
                       ),
                     ],
                   ),

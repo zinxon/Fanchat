@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/user_model.dart';
 import '../models/stock_model.dart';
 import '../page/webview_page.dart';
 import '../style/theme.dart' show AppColors;
+import '../blocs/user_bloc_provider.dart';
 
 UserModel _userModel = UserModel.instance;
+UserBloc _userBloc;
 
 Widget cardWidget(BuildContext context, Stock stock, bool canAdd) {
+  _userBloc = UserBlocProvider.of(context);
   return Card(
     color: AppColors.greyColor2,
     shape: RoundedRectangleBorder(
@@ -37,13 +39,16 @@ Widget cardWidget(BuildContext context, Stock stock, bool canAdd) {
                       onPressed: () {
                         try {
                           if (_userModel != null) {
-                            Firestore.instance
-                                .collection("users")
-                                .document(_userModel.id)
-                                .updateData({
-                              "stockCodeList":
-                                  FieldValue.arrayUnion([stock.stockCode]),
-                            });
+                            print('stockCode: ${stock.stockCode}');
+                            _userBloc.addStock(stock.stockCode);
+                            _userBloc.updateStockDataList();
+                            // Firestore.instance
+                            //     .collection("users")
+                            //     .document(_userModel.id)
+                            //     .updateData({
+                            //   "stockCodeList":
+                            //       FieldValue.arrayUnion([stock.stockCode]),
+                            // });
                             Fluttertoast.showToast(
                                 msg: "${stock.stockCode} 已關注",
                                 toastLength: Toast.LENGTH_SHORT,

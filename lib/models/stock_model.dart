@@ -12,7 +12,7 @@ class Stock {
 
   Stock.fromFirebase(Map<dynamic, dynamic> parsedJson) {
     _stockCode = parsedJson['stockCode'];
-    _stockName = parsedJson['stockName'];
+    _stockName = parsedJson['name'];
     _discribe = parsedJson['discribe'];
     _employees = parsedJson['employees'];
     _industry = parsedJson['industry'];
@@ -27,7 +27,7 @@ class Stock {
   Map<String, dynamic> toMap() {
     return {
       "stockCode": _stockCode,
-      "stockName": _stockName,
+      "name": _stockName,
       "discribe": _discribe,
       "employees": _employees,
       "industry": _industry,

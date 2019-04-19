@@ -37,7 +37,6 @@ class _ChatbotPageState extends State<ChatbotPage>
   @override
   void didChangeDependencies() {
     _userBloc = UserBlocProvider.of(context);
-    _userBloc.getUserModel();
     super.didChangeDependencies();
   }
 
@@ -192,7 +191,8 @@ class _ChatbotPageState extends State<ChatbotPage>
       try {
         if (_userModel != null) {
           _userBloc.addStock(stockCode);
-          Fluttertoast.showToast(
+          await _userBloc.updateStockDataList();
+          await Fluttertoast.showToast(
               msg: "${stockCode} 已關注",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
@@ -226,33 +226,32 @@ class ChatMessage extends StatelessWidget {
             child: Container(child: Image.asset("assets/img/fanchat.png"))),
       ),
       Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Text(this.name, style: TextStyle(fontWeight: FontWeight.bold)),
-                IconButton(
-                  icon: Icon(Icons.volume_up),
-                  color: Colors.black,
-                  onPressed: () {
-                    flutterTts.speak(text);
-                  },
-                ),
-              ],
-            ),
-            isGetInfo
-                ? cardWidget(context, stock, true)
-                : Container(
-                    child: GestureDetector(
-                      child: CustomToolTip(
-                        text: text,
-                      ),
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Text(this.name, style: TextStyle(fontWeight: FontWeight.bold)),
+              IconButton(
+                icon: Icon(Icons.volume_up),
+                color: Colors.black,
+                onPressed: () {
+                  flutterTts.speak(text);
+                },
+              ),
+            ],
+          ),
+          isGetInfo
+              ? cardWidget(context, stock, true)
+              : Container(
+                  child: GestureDetector(
+                    child: CustomToolTip(
+                      text: text,
                     ),
                   ),
-          ],
-        ),
-      ),
+                ),
+        ],
+      )),
     ];
   }
 

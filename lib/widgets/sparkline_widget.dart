@@ -1,4 +1,3 @@
-/// Timeseries chart example
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 
@@ -18,13 +17,15 @@ class TimeSeriesChart extends StatefulWidget {
 class _TimeSeriesChartState extends State<TimeSeriesChart> {
   List<TimeSeriesSale> timeSeries;
   bool animate;
+  DateTime _time;
+  Map<String, num> _measures;
 
   _TimeSeriesChartState(this.timeSeries, this.animate);
 
   List<charts.Series<TimeSeriesSale, DateTime>> _createStockData() {
     return [
       new charts.Series<TimeSeriesSale, DateTime>(
-        id: 'Sales',
+        id: 'Price',
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
         domainFn: (TimeSeriesSale sales, _) => sales.time,
         measureFn: (TimeSeriesSale sales, _) => sales.sales,
@@ -33,70 +34,80 @@ class _TimeSeriesChartState extends State<TimeSeriesChart> {
     ];
   }
 
+  _onSelectionChanged(charts.SelectionModel model) {
+    final selectedDatum = model.selectedDatum;
+
+    DateTime time;
+    final measures = <String, num>{};
+
+    // We get the model that updated with a list of [SeriesDatum] which is
+    // simply a pair of series & datum.
+    //
+    // Walk the selection updating the measures map, storing off the sales and
+    // series name for each selection point.
+    if (selectedDatum.isNotEmpty) {
+      time = selectedDatum.first.datum.time;
+      selectedDatum.forEach((charts.SeriesDatum datumPair) {
+        measures[datumPair.series.displayName] = datumPair.datum.sales;
+      });
+    }
+
+    // Request a build.
+    setState(() {
+      _time = time;
+      _measures = measures;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return new charts.TimeSeriesChart(
-      _createStockData(),
-      animate: animate,
-      dateTimeFactory: const charts.LocalDateTimeFactory(),
-    );
-  }
-}
-
-class SimpleTimeSeriesChart extends StatelessWidget {
-  final List<charts.Series> seriesList;
-  final bool animate;
-
-  SimpleTimeSeriesChart(this.seriesList, {this.animate});
-
-  /// Creates a [TimeSeriesChart] with sample data and no transition.
-  factory SimpleTimeSeriesChart.withSampleData() {
-    return new SimpleTimeSeriesChart(
-      _createSampleData(),
-      // Disable animations for image tests.
-      animate: false,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return new charts.TimeSeriesChart(
-      seriesList,
-      animate: animate,
-      // Optionally pass in a [DateTimeFactory] used by the chart. The factory
-      // should create the same type of [DateTime] as the data provided. If none
-      // specified, the default creates local date time.
-      dateTimeFactory: const charts.LocalDateTimeFactory(),
-    );
-  }
-
-  /// Create one series with sample hard coded data.
-  static List<charts.Series<TimeSeriesSales, DateTime>> _createSampleData() {
-    final data = [
-      new TimeSeriesSales(new DateTime(2017, 9, 19), 5),
-      new TimeSeriesSales(new DateTime(2017, 9, 26), 25),
-      new TimeSeriesSales(new DateTime(2017, 10, 3), 100.5),
-      new TimeSeriesSales(new DateTime(2017, 10, 10), 75),
+    List<num> salesList = [];
+    for (var item in timeSeries) {
+      salesList.add(item.sales);
+    }
+    // The children consist of a Chart and Text widgets below to hold the info.
+    final children = <Widget>[
+      SizedBox(
+          height: 80.0,
+          child: charts.TimeSeriesChart(
+            _createStockData(),
+            animate: animate,
+            dateTimeFactory: const charts.LocalDateTimeFactory(),
+            primaryMeasureAxis: charts.NumericAxisSpec(
+                tickProviderSpec: charts.NumericEndPointsTickProviderSpec(),
+                viewport: charts.NumericExtents.fromValues(salesList)),
+            behaviors: [
+              charts.PanAndZoomBehavior(),
+              charts.LinePointHighlighter(
+                  showHorizontalFollowLine:
+                      charts.LinePointHighlighterFollowLineType.none,
+                  showVerticalFollowLine:
+                      charts.LinePointHighlighterFollowLineType.nearest),
+              charts.SelectNearest(
+                  eventTrigger: charts.SelectionTrigger.tapAndDrag)
+            ],
+            selectionModels: [
+              charts.SelectionModelConfig(
+                type: charts.SelectionModelType.info,
+                changedListener: _onSelectionChanged,
+              )
+            ],
+          )),
     ];
 
-    // getStockPrice('0700.HK');
+    // If there is a selection, then include the details.
+    if (_time != null) {
+      children.add(Padding(
+          padding: EdgeInsets.only(top: 5.0),
+          child: Text(_time.toString().split(' ')[0])));
+    }
+    _measures?.forEach((String series, num value) {
+      children.add(Text(
+        '${series}: \$${value}',
+        style: TextStyle(fontSize: 15),
+      ));
+    });
 
-    return [
-      new charts.Series<TimeSeriesSales, DateTime>(
-        id: 'Sales',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (TimeSeriesSales sales, _) => sales.time,
-        measureFn: (TimeSeriesSales sales, _) => sales.sales,
-        data: data,
-      )
-    ];
+    return Column(children: children);
   }
-}
-
-// Sample time series data type.
-class TimeSeriesSales {
-  final DateTime time;
-  final double sales;
-
-  TimeSeriesSales(this.time, this.sales);
 }

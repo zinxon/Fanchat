@@ -17,4 +17,7 @@ class TimeSeriesSale {
   final double sales;
 
   TimeSeriesSale(this.time, this.sales);
+
+  // double get sales => _sales;
+  // DateTime get time => _time;
 }

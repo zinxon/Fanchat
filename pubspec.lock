@@ -22,13 +22,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  async_loader:
-    dependency: "direct main"
-    description:
-      name: async_loader
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -115,6 +108,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
+  fcharts:
+    dependency: "direct main"
+    description:
+      name: fcharts
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.10"
   firebase_auth:
     dependency: "direct main"
     description:
@@ -129,13 +129,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.4"
-  firebase_ml_vision:
-    dependency: "direct main"
-    description:
-      name: firebase_ml_vision
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.6.0+2"
   fluro:
     dependency: "direct main"
     description:
@@ -181,13 +174,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.4"
-  flutter_webview_plugin:
-    dependency: "direct main"
-    description:
-      name: flutter_webview_plugin
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.3"
   fluttertoast:
     dependency: "direct main"
     description:
@@ -272,13 +258,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.6.2"
-  path_provider:
-    dependency: "direct main"
-    description:
-      name: path_provider
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.0+1"
   pedantic:
     dependency: transitive
     description:

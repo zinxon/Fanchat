@@ -7,11 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user_model.dart';
 import '../models/stock_model.dart';
-import '../models/stockData_model.dart';
-import '../api/stock_api.dart';
 
 class FirestoreProvider {
-  StockDataProvider _apiProvider = StockDataProvider();
   SharedPreferences prefs;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -34,7 +31,7 @@ class FirestoreProvider {
     prefs = await SharedPreferences.getInstance();
     prefs.setString("uid", user.uid);
     String uid = prefs.getString('uid');
-    // print('-------------------> uid: $uid}');
+    print('-------------------> uid in sign in Google: $uid}');
     if (user != null) {
       final QuerySnapshot result = await Firestore.instance
           .collection("users")
@@ -53,7 +50,7 @@ class FirestoreProvider {
           "didQuiz": false
         });
       }
-      // getUserModel(uid);
+      getUserModel(uid);
     }
     Fluttertoast.showToast(
         msg: "Welcome, ${user.displayName}!",
@@ -79,8 +76,8 @@ class FirestoreProvider {
         prefs = await SharedPreferences.getInstance();
         prefs.setString("uid", user.uid);
         String uid = prefs.getString('uid');
-        // print('-------------------> uid: $uid');
-        // getUserModel(uid);
+        print('-------------------> uid in sign in email: $uid');
+        getUserModel(uid);
         Fluttertoast.showToast(
             msg: "Welcome, ${user.displayName}!",
             toastLength: Toast.LENGTH_SHORT,
@@ -139,7 +136,7 @@ class FirestoreProvider {
   }
 
   Future<UserModel> getUserModel(String uid) async {
-    // print("------------> In getUserModel: $uid");
+    print("------------> In getUserModel: $uid");
     final QuerySnapshot result = await Firestore.instance
         .collection("users")
         .where("id", isEqualTo: uid)
@@ -147,14 +144,15 @@ class FirestoreProvider {
     final List<DocumentSnapshot> documents = result.documents;
     var userDoc = documents[0].data;
     UserModel userModel = UserModel.fromFirebase(userDoc);
-    for (var item in userModel.stockList) {
-      StockData stockData = await _apiProvider.getStockData(item.stockCode);
-      item.setStockData = stockData;
-    }
+    // for (var item in userModel.stockList) {
+    //   StockData stockData = await _apiProvider.getStockData(item.stockCode);
+    //   item.setStockData = stockData;
+    // }
     return userModel;
   }
 
   Future<void> addStock(String uid, String stockCode) async {
+    print('stockCode in addStock: $stockCode');
     var temp = await Firestore.instance
         .collection("stockCode")
         .where("stockCode", isEqualTo: stockCode)
@@ -164,12 +162,12 @@ class FirestoreProvider {
     List stock = [
       {
         'stockCode': tempData['stockCode'],
-        'stockName': tempData['name'],
+        'name': tempData['name'],
         'discribe': tempData['discribe'],
         'employees': tempData['employees'],
         'industry': tempData['industry'],
         'sector': tempData['sector'],
-        'website': tempData['website']
+        'website': tempData['website'],
       }
     ];
     Firestore.instance.collection("users").document(uid).updateData({

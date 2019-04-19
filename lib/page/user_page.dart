@@ -9,7 +9,6 @@ import '../models/user_model.dart';
 import '../models/stock_model.dart';
 import '../widgets/card_widget.dart';
 import '../widgets/list_widget.dart';
-import '../api/stock_api.dart';
 import 'webview_page.dart';
 import 'login_page.dart';
 import 'quiz_page.dart';
@@ -34,7 +33,7 @@ class _UserPageState extends State<UserPage> {
   @override
   void didChangeDependencies() {
     _userBloc = UserBlocProvider.of(context);
-    _userBloc.getUserModel();
+    _userBloc.updateStockDataList();
     super.didChangeDependencies();
   }
 
@@ -113,38 +112,60 @@ class _UserPageState extends State<UserPage> {
                                     itemCount: snapshot.data.stockList.length,
                                     itemBuilder: (_, int index) {
                                       return Dismissible(
-                                        onResize: () async {
-                                          await _userBloc.getStockData(snapshot
-                                              .data.stockList[index].stockCode);
-                                        },
+                                        // onResize: () async {
+                                        //   _userBloc.getStockData(snapshot
+                                        //       .data.stockList[index].stockCode);
+                                        // },
                                         key: Key(snapshot
                                             .data.stockList[index].stockCode),
                                         background:
                                             myHiddenContainer(context) ??
                                                 Container(),
                                         child: InkWell(
-                                          highlightColor: Colors.orange,
-                                          onTap: () {
-                                            // _userBloc.getStockData(snapshot.data
-                                            //     .stockList[index].stockCode);
-                                            print('index: $index');
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    _dialogBuilder(
-                                                        context,
-                                                        snapshot.data
-                                                            .stockList[index]));
-                                          },
-                                          child: myListContainer(
-                                                  snapshot.data.stockList[index]
-                                                      .stockName,
-                                                  snapshot.data.stockList[index]
-                                                      .stockCode,
-                                                  snapshot.data.stockList[index]
-                                                      .stockData.stockData) ??
-                                              Container(),
-                                        ),
+                                            highlightColor: Colors.orange,
+                                            onTap: () {
+                                              print('index: $index');
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      _dialogBuilder(
+                                                          context,
+                                                          snapshot.data
+                                                                  .stockList[
+                                                              index]));
+                                            },
+                                            // child: myListContainer(
+                                            //         snapshot
+                                            //             .data
+                                            //             .stockList[index]
+                                            //             .stockName,
+                                            //         snapshot
+                                            //             .data
+                                            //             .stockList[index]
+                                            //             .stockCode,
+                                            //         snapshot
+                                            //             .data
+                                            //             .stockList[index]
+                                            //             .stockData
+                                            //             .stockData) ??
+                                            //     Container()),
+                                            child: isLoading(snapshot.data
+                                                    .stockList[index].stockData)
+                                                ? myListContainer(
+                                                    snapshot
+                                                        .data
+                                                        .stockList[index]
+                                                        .stockName,
+                                                    snapshot
+                                                        .data
+                                                        .stockList[index]
+                                                        .stockCode,
+                                                    snapshot
+                                                        .data
+                                                        .stockList[index]
+                                                        .stockData
+                                                        .stockData)
+                                                : CircularProgressIndicator()),
                                         onDismissed: (direction) {
                                           _userBloc.delStock(
                                               snapshot.data, index);
@@ -237,12 +258,15 @@ class _UserPageState extends State<UserPage> {
                       ))
                 ],
               ));
-            }
-            if (snapshot.connectionState != ConnectionState.done) {
+            } else if (snapshot.hasError) {
               return Center(
-                child: CircularProgressIndicator(),
+                // child: CircularProgressIndicator(),
+                child: Text("${snapshot.error}"),
               );
             }
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }),
     );
   }
@@ -265,6 +289,14 @@ class _UserPageState extends State<UserPage> {
       print(e);
     });
   }
+}
+
+bool isLoading(var stockData) {
+  if (stockData != null) {
+    return true;
+  }
+  return false;
+  // isLoading(stockData);
 }
 
 class getClipper extends CustomClipper<Path> {

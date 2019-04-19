@@ -57,6 +57,7 @@ class LoginBloc {
     _email.close();
     await _password.drain();
     _password.close();
+    print("--------------->Login Bloc dispose");
   }
 
   bool validateFields() {

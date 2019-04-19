@@ -1,14 +1,18 @@
 import 'firestore_provider.dart';
 import '../models/stockData_model.dart';
 import '../models/user_model.dart';
-import '../api/stock_api.dart';
+import 'stock_api.dart';
 
 class Repository {
   StockDataProvider _apiProvider = StockDataProvider();
   final _firestoreProvider = FirestoreProvider();
 
-  Future<StockData> getStockData(String stockCode) {
-    return _apiProvider.getStockData(stockCode);
+  // Future<StockData> getStockData(String stockCode) {
+  //   return _apiProvider.getStockData(stockCode);
+  // }
+
+  Future<UserModel> updateStockDataList(UserModel userModel) async {
+    return _apiProvider.updateStockDataList(userModel);
   }
 
   Future<void> signInWithEmailAndPassword(String email, String password) =>

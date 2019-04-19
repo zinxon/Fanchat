@@ -7,6 +7,7 @@ import '../app_holder.dart';
 import '../style/theme.dart' as Theme;
 import '../utils/bubble_indication_painter.dart';
 import '../blocs/login_bloc_provider.dart';
+import '../blocs/user_bloc_provider.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -18,6 +19,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
   LoginBloc _loginBloc;
+  UserBloc _userBloc;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
@@ -47,6 +49,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   void didChangeDependencies() {
     _loginBloc = LoginBlocProvider.of(context);
+    _userBloc = UserBlocProvider.of(context);
     super.didChangeDependencies();
   }
 
@@ -56,6 +59,7 @@ class _LoginPageState extends State<LoginPage>
     myFocusNodeEmail.dispose();
     _pageController?.dispose();
     _loginBloc.dispose();
+    print("Login Page dispose");
     super.dispose();
   }
 
@@ -618,14 +622,14 @@ class _LoginPageState extends State<LoginPage>
     });
   }
 
-  void _signInWithEmailAndPassword() {
-    _loginBloc.signInWithEmailAndPassword();
+  void _signInWithEmailAndPassword() async {
+    await _loginBloc.signInWithEmailAndPassword();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => AppHolder()));
   }
 
-  void _signInWithGoogle() {
-    _loginBloc.signInWithGoogle();
+  void _signInWithGoogle() async {
+    await _loginBloc.signInWithGoogle();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => AppHolder()));
   }
