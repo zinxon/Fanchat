@@ -70,8 +70,7 @@ Widget myListContainer(
                       Container(
                         // height: 80,
                         height: 120,
-                        // child: SimpleTimeSeriesChart.withSampleData(),
-                        child: TimeSeriesChart(timeSeries, true),
+                        child: TimeSeriesChart(timeSeries, false),
                       ),
                     ],
                   ),

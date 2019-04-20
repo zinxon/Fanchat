@@ -12,6 +12,7 @@ import '../widgets/list_widget.dart';
 import 'webview_page.dart';
 import 'login_page.dart';
 import 'quiz_page.dart';
+import 'recommand_page.dart';
 
 SharedPreferences prefs;
 
@@ -87,15 +88,43 @@ class _UserPageState extends State<UserPage> {
                                 fontFamily: 'Montserrat'),
                           ),
                           SizedBox(height: 15.0),
-                          Text(
-                            snapshot.data.didQuiz
-                                ? snapshot.data.investorType
-                                : '點擊下方Quiz按鈕進行MBTI測驗',
-                            style: TextStyle(
-                                fontSize: 17.0,
-                                fontStyle: FontStyle.italic,
-                                fontFamily: 'Montserrat'),
-                          ),
+                          snapshot.data.didQuiz
+                              ? Container(
+                                  height: 25,
+                                  width: 200,
+                                  child: Material(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    shadowColor: Colors.orangeAccent,
+                                    color: Colors.orange,
+                                    elevation: 7.0,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  RecommandPage(snapshot
+                                                      .data.investorType)),
+                                        );
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          snapshot.data.investorType,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'Montserrat'),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  '點擊下方Quiz按鈕進行MBTI測驗',
+                                  style: TextStyle(
+                                      fontSize: 17.0,
+                                      fontStyle: FontStyle.italic,
+                                      fontFamily: 'Montserrat'),
+                                ),
                           SizedBox(
                             height: 10,
                           ),
@@ -112,10 +141,6 @@ class _UserPageState extends State<UserPage> {
                                     itemCount: snapshot.data.stockList.length,
                                     itemBuilder: (_, int index) {
                                       return Dismissible(
-                                        // onResize: () async {
-                                        //   _userBloc.getStockData(snapshot
-                                        //       .data.stockList[index].stockCode);
-                                        // },
                                         key: Key(snapshot
                                             .data.stockList[index].stockCode),
                                         background:
@@ -134,21 +159,6 @@ class _UserPageState extends State<UserPage> {
                                                                   .stockList[
                                                               index]));
                                             },
-                                            // child: myListContainer(
-                                            //         snapshot
-                                            //             .data
-                                            //             .stockList[index]
-                                            //             .stockName,
-                                            //         snapshot
-                                            //             .data
-                                            //             .stockList[index]
-                                            //             .stockCode,
-                                            //         snapshot
-                                            //             .data
-                                            //             .stockList[index]
-                                            //             .stockData
-                                            //             .stockData) ??
-                                            //     Container()),
                                             child: isLoading(snapshot.data
                                                     .stockList[index].stockData)
                                                 ? myListContainer(
@@ -231,27 +241,28 @@ class _UserPageState extends State<UserPage> {
                                               ),
                                             ))),
                               Container(
-                                  margin: const EdgeInsets.only(
-                                      top: 290, left: 230.0),
-                                  height: 30.0,
-                                  width: 95.0,
-                                  child: Material(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    shadowColor: Colors.redAccent,
-                                    color: Colors.red,
-                                    elevation: 7.0,
-                                    child: GestureDetector(
-                                      onTap: _logout,
-                                      child: Center(
-                                        child: Text(
-                                          'Logout',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: 'Montserrat'),
-                                        ),
+                                margin: const EdgeInsets.only(
+                                    top: 290, left: 230.0),
+                                height: 30.0,
+                                width: 95.0,
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  shadowColor: Colors.redAccent,
+                                  color: Colors.red,
+                                  elevation: 7.0,
+                                  child: GestureDetector(
+                                    onTap: _logout,
+                                    child: Center(
+                                      child: Text(
+                                        'Logout',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'Montserrat'),
                                       ),
                                     ),
-                                  ))
+                                  ),
+                                ),
+                              )
                             ],
                           )
                         ],

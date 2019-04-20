@@ -42,13 +42,6 @@ Widget cardWidget(BuildContext context, Stock stock, bool canAdd) {
                             print('stockCode: ${stock.stockCode}');
                             _userBloc.addStock(stock.stockCode);
                             _userBloc.updateStockDataList();
-                            // Firestore.instance
-                            //     .collection("users")
-                            //     .document(_userModel.id)
-                            //     .updateData({
-                            //   "stockCodeList":
-                            //       FieldValue.arrayUnion([stock.stockCode]),
-                            // });
                             Fluttertoast.showToast(
                                 msg: "${stock.stockCode} 已關注",
                                 toastLength: Toast.LENGTH_SHORT,
