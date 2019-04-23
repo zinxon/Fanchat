@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter_pdf_viewer/flutter_pdf_viewer.dart';
+import 'package:youtube_player/youtube_player.dart';
 
 import '../style/theme.dart' as Theme;
+import 'youtube_page.dart';
 
 class RecommandPage extends StatefulWidget {
   final String investorType;
@@ -15,6 +18,7 @@ class _RecommandPageState extends State<RecommandPage> {
   String content;
   String suggestMarket;
   List<LinearSales> data;
+  VideoPlayerController _videoController;
 
   @override
   void initState() {
@@ -96,49 +100,101 @@ class _RecommandPageState extends State<RecommandPage> {
         ),
         automaticallyImplyLeading: true,
       ),
-      body: Column(
-        children: [
-          Card(
-            color: Theme.AppColors.greyColor2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Card(
+                color: Theme.AppColors.greyColor2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    ListTile(
-                        title: Text(
-                          '${widget.investorType}\n',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Montserrat'),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        ListTile(
+                            title: Text(
+                              '${widget.investorType}\n',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Montserrat'),
+                            ),
+                            contentPadding: EdgeInsets.all(5),
+                            subtitle: Text(
+                              content,
+                            )),
+                        Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.only(bottom: 5),
+                          child: Text('建議投資市場 : $suggestMarket'),
                         ),
-                        contentPadding: EdgeInsets.all(5),
-                        subtitle: Text(
-                          content,
-                        )),
-                    Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.only(bottom: 5),
-                      child: Text('建議投資市場： $suggestMarket'),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 5),
+              Container(
+                width: 150,
+                child: Material(
+                  borderRadius: BorderRadius.circular(20.0),
+                  shadowColor: Colors.orangeAccent,
+                  color: Colors.orange,
+                  elevation: 7.0,
+                  child: GestureDetector(
+                    onTap: () {
+                      PdfViewer.loadAsset(
+                        'assets/pdf/test.pdf',
+                      );
+                    },
+                    child: Center(
+                      child: Text(
+                        '組合分析',
+                        style: TextStyle(
+                            color: Colors.white, fontFamily: 'Montserrat'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 15),
+              Container(
+                width: 150,
+                child: Material(
+                  borderRadius: BorderRadius.circular(20.0),
+                  shadowColor: Colors.orangeAccent,
+                  color: Colors.orange,
+                  elevation: 7.0,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => YoutubePage()),
+                      );
+                    },
+                    child: Center(
+                      child: Text(
+                        '投資入門影片',
+                        style: TextStyle(
+                            color: Colors.white, fontFamily: 'Montserrat'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                width: 300,
+                height: 300,
+                child: PieOutsideLabelChart.withSampleData(data),
+              ),
+            ],
           ),
-          SizedBox(height: 5),
-          Container(
-            width: 290,
-            height: 290,
-            child: PieOutsideLabelChart.withSampleData(data),
-          )
-        ],
+        ),
       ),
     );
   }

@@ -148,6 +148,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.0"
+  flutter_pdf_viewer:
+    dependency: "direct main"
+    description:
+      name: flutter_pdf_viewer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -272,6 +279,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.21.0"
+  share:
+    dependency: transitive
+    description:
+      name: share
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -368,6 +382,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.15"
+  youtube_player:
+    dependency: "direct main"
+    description:
+      name: youtube_player
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.3.0"
 sdks:
   dart: ">=2.2.0 <3.0.0"
   flutter: ">=1.2.0 <2.0.0"
