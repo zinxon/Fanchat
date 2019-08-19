@@ -30,12 +30,12 @@ class _QuizPageState extends State<QuizPage> {
   String testUrl =
       'https://www.apesk.com/mbti/submit_email_date_cx_m.asp?code=219.73.34.161&user=20944310';
 
+  // "INTJ 獨立自主型",
   List _types = [
     "ISTJ 檢查員型",
     "ISTP 冒險家型",
     "ISFJ 照顧者型",
     "ISFP 藝術家型",
-    // "INTJ 獨立自主型",
     "INTJ 專家型",
     "INTP 學者型",
     "INFJ 博愛型",

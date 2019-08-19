@@ -3,6 +3,7 @@ import 'package:flutter_dialogflow/dialogflow_v2.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/gestures.dart';
 
 import '../app_holder.dart';
 import '../style/theme.dart' show AppColors, TextStyles;
@@ -103,8 +104,11 @@ class _ChatbotPageState extends State<ChatbotPage>
       var tempData = temp.documents[0].data;
       print(tempData);
       stock = Stock.fromFirebase(tempData);
-      // print(stock.website);
       isGetInfo = true;
+    } else if (response.queryResult.action == "get_stock_prediction") {
+      if (response.queryResult.parameters[1] == "LSTM") {
+        print("hihi");
+      }
     }
     ChatMessage message = ChatMessage(
         text: response.getMessage(),
@@ -315,7 +319,6 @@ class CustomToolTip extends StatelessWidget {
 
   bool checkUrl() {
     if (text.contains("https")) {
-      textUrl = text.split(" ")[0];
       return true;
     }
     return false;
@@ -323,54 +326,117 @@ class CustomToolTip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Tooltip(
-        preferBelow: false,
-        message: "Go",
-        // child: Text(text),
-        child: Container(
-          width: 270,
-          child: Text.rich(checkUrl()
-              ? TextSpan(
-                  children: [
-                    TextSpan(
-                        text: text.split(' ')[0],
-                        style: TextStyle(
-                          color: Colors.blueAccent,
-                          decoration: TextDecoration.underline,
-                        )),
-                    TextSpan(text: text.split(' ')[1])
-                  ],
-                )
-              : TextSpan(text: text)),
-          padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-          decoration: BoxDecoration(
-              color: AppColors.greyColor2,
-              borderRadius: BorderRadius.circular(8.0)),
-        ),
+    return Tooltip(
+      preferBelow: false,
+      message: "Go",
+      // child: Text(text),
+      child: Container(
+        width: 270,
+        child: Text.rich(checkUrl()
+            ? TextSpan(
+                children: [
+                  TextSpan(text: text.split('\n')[0] + "\n"),
+                  TextSpan(text: text.split('\n')[1] + "\n"),
+                  TextSpan(
+                    text: text.split('\n')[2] + "\n",
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => {
+                            showDialog(
+                                context: context,
+                                builder: (context) => SimpleDialog(
+                                      backgroundColor: Colors.transparent,
+                                      children: <Widget>[
+                                        Card(
+                                          color: AppColors.greyColor2,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0)),
+                                          ),
+                                          child: ListTile(
+                                            title:
+                                                Text('預測方法:Linear Regression'),
+                                            subtitle: Text(
+                                                '此方法為數學統計模型中的線性回歸，\n利用稱爲線性回歸方程的最小平方函數對一個或多個自變量和因變量之間關系進行建模的一種回歸分析，\n因而找出日期與股價收結數的關係。'),
+                                          ),
+                                        ),
+                                      ],
+                                    ))
+                          },
+                  ),
+                  TextSpan(
+                    text: text.split('\n')[3] + "\n",
+                    style: TextStyle(
+                      color: Colors.blueAccent,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => WebViewPage(
+                                        url: text.split('\n')[3],
+                                        isBack: true,
+                                        title: "股票預測圖表",
+                                      )),
+                            )
+                          },
+                  ),
+                  TextSpan(
+                    text: text.split('\n')[4] + "\n",
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => {
+                            showDialog(
+                                context: context,
+                                builder: (context) => SimpleDialog(
+                                      backgroundColor: Colors.transparent,
+                                      children: <Widget>[
+                                        Card(
+                                          color: AppColors.greyColor2,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0)),
+                                          ),
+                                          child: ListTile(
+                                            title: Text(
+                                              '預測方法:LSTM',
+                                            ),
+                                            subtitle: Text(
+                                                '此方法為深度學習的遞歸神經網路和長短期記憶模型，\nRecurrent Neural Networks (RNN) with Long Short Term Memory (LSTM)\n此學習方法需要用上2000日的股價收結數來學習。'),
+                                          ),
+                                        ),
+                                      ],
+                                    ))
+                          },
+                  ),
+                  TextSpan(
+                    text: text.split('\n')[5] + "\n",
+                    style: TextStyle(
+                      color: Colors.blueAccent,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => WebViewPage(
+                                        url: text.split('\n')[5],
+                                        isBack: true,
+                                        title: "股票預測圖表",
+                                      )),
+                            )
+                          },
+                  ),
+                  TextSpan(text: text.split('\n')[6]),
+                ],
+              )
+            : TextSpan(text: text)),
+        padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+        decoration: BoxDecoration(
+            color: AppColors.greyColor2,
+            borderRadius: BorderRadius.circular(8.0)),
       ),
-      onTap: () {
-        if (checkUrl()) {
-          // Clipboard.setData(ClipboardData(text: text));
-          Fluttertoast.showToast(
-              msg: "GO",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIos: 1,
-              backgroundColor: Colors.blueGrey,
-              textColor: Colors.white,
-              fontSize: 14.0);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => WebViewPage(
-                      url: textUrl,
-                      isBack: true,
-                      title: "股票預測圖表",
-                    )),
-          );
-        }
-      },
     );
   }
 }

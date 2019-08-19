@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../resources/repository.dart';
 import '../models/user_model.dart';
-import '../models/stockData_model.dart';
 
 class UserBloc {
   SharedPreferences prefs;

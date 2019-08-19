@@ -77,14 +77,21 @@ class _TimeSeriesChartState extends State<TimeSeriesChart> {
                 tickProviderSpec: charts.NumericEndPointsTickProviderSpec(),
                 viewport: charts.NumericExtents.fromValues(salesList)),
             behaviors: [
-              charts.PanAndZoomBehavior(),
-              charts.LinePointHighlighter(
+              new charts.LinePointHighlighter(
                   showHorizontalFollowLine:
                       charts.LinePointHighlighterFollowLineType.none,
                   showVerticalFollowLine:
                       charts.LinePointHighlighterFollowLineType.nearest),
-              charts.SelectNearest(
-                  eventTrigger: charts.SelectionTrigger.tapAndDrag)
+              new charts.SelectNearest(
+                  eventTrigger: charts.SelectionTrigger.tapAndDrag),
+              charts.PanAndZoomBehavior(),
+              // charts.LinePointHighlighter(
+              //     showHorizontalFollowLine:
+              //         charts.LinePointHighlighterFollowLineType.none,
+              //     showVerticalFollowLine:
+              //         charts.LinePointHighlighterFollowLineType.nearest),
+              // charts.SelectNearest(
+              //     eventTrigger: charts.SelectionTrigger.tapAndDrag)
             ],
             selectionModels: [
               charts.SelectionModelConfig(
